@@ -12,15 +12,15 @@ $ErrorActionPreference = "Stop" # остановить скрипт при пе�
 
 try
 {
-	$l18n_path = $(Resolve-Path "./l18n/$language.ps1")
+	$l10n_path = $(Resolve-Path "./l10n/$language.ps1")
 }
 catch
 {
 	Write-Host "Warning: unable to find a language file for `"$language`", falling back to English..."
 	$language = 'en-US'
-	$l18n_path = $(Resolve-Path "./l18n/$language.ps1")
+	$l10n_path = $(Resolve-Path "./l10n/$language.ps1")
 }
-. $l18n_path
+. $l10n_path
 
 # Настраиваем переменные для компилятора Open Watcom
 $watcom_root = $(Resolve-Path "./watcom")
