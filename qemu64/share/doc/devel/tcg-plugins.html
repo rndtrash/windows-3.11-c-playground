@@ -1,0 +1,1446 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>QEMU TCG Plugins &mdash; QEMU  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/custom.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Execution Record/Replay" href="replay.html" />
+    <link rel="prev" title="TCG Instruction Counting" href="tcg-icount.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #802400" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> QEMU
+          
+
+          
+            
+            <img src="../_static/qemu_128x128.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                7.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About QEMU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../system/index.html">System Emulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Mode Emulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../interop/index.html">System Emulation Management and Interoperability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../specs/index.html">System Emulation Guest Hardware Specifications</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Developer Information</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index-process.html">QEMU Community Processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index-build.html">QEMU Build and Test System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index-api.html">Internal QEMU APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index-internals.html">Internal Subsystem Information</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index-tcg.html">TCG Emulation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="tcg.html">Translator Internals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="decodetree.html">Decodetree Specification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="multi-thread-tcg.html">Multi-threaded TCG</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tcg-icount.html">TCG Instruction Counting</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">QEMU TCG Plugins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#writing-plugins">Writing plugins</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#internals">Internals</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#example-plugins">Example Plugins</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="replay.html">Execution Record/Replay</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">QEMU</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Developer Information</a> &raquo;</li>
+        
+          <li><a href="index-tcg.html">TCG Emulation</a> &raquo;</li>
+        
+      <li>QEMU TCG Plugins</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+              <a href="https://gitlab.com/qemu-project/qemu/blob/master/docs/devel/tcg-plugins.rst" class="fa fa-gitlab"> Edit on GitLab</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="qemu-tcg-plugins">
+<h1>QEMU TCG Plugins<a class="headerlink" href="#qemu-tcg-plugins" title="Permalink to this headline">¶</a></h1>
+<p>QEMU TCG plugins provide a way for users to run experiments taking
+advantage of the total system control emulation can have over a guest.
+It provides a mechanism for plugins to subscribe to events during
+translation and execution and optionally callback into the plugin
+during these events. TCG plugins are unable to change the system state
+only monitor it passively. However they can do this down to an
+individual instruction granularity including potentially subscribing
+to all load and store operations.</p>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>Any QEMU binary with TCG support has plugins enabled by default.
+Earlier releases needed to be explicitly enabled with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">configure</span> <span class="o">--</span><span class="n">enable</span><span class="o">-</span><span class="n">plugins</span>
+</pre></div>
+</div>
+<p>Once built a program can be run with multiple plugins loaded each with
+their own arguments:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$QEMU $OTHER_QEMU_ARGS \
+    -plugin contrib/plugin/libhowvec.so,inline=on,count=hint \
+    -plugin contrib/plugin/libhotblocks.so
+</pre></div>
+</div>
+<p>Arguments are plugin specific and can be used to modify their
+behaviour. In this case the howvec plugin is being asked to use inline
+ops to count and break down the hint instructions by type.</p>
+<p>Linux user-mode emulation also evaluates the environment variable
+<code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>QEMU_PLUGIN=&quot;file=contrib/plugins/libhowvec.so,inline=on,count=hint&quot; $QEMU
+</pre></div>
+</div>
+</div>
+<div class="section" id="writing-plugins">
+<h2>Writing plugins<a class="headerlink" href="#writing-plugins" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="api-versioning">
+<h3>API versioning<a class="headerlink" href="#api-versioning" title="Permalink to this headline">¶</a></h3>
+<p>This is a new feature for QEMU and it does allow people to develop
+out-of-tree plugins that can be dynamically linked into a running QEMU
+process. However the project reserves the right to change or break the
+API should it need to do so. The best way to avoid this is to submit
+your plugin upstream so they can be updated if/when the API changes.</p>
+<p>All plugins need to declare a symbol which exports the plugin API
+version they were built against. This can be done simply by:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">QEMU_PLUGIN_EXPORT</span> <span class="nb">int</span> <span class="n">qemu_plugin_version</span> <span class="o">=</span> <span class="n">QEMU_PLUGIN_VERSION</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The core code will refuse to load a plugin that doesn’t export a
+<code class="docutils literal notranslate"><span class="pre">qemu_plugin_version</span></code> symbol or if plugin version is outside of QEMU’s
+supported range of API versions.</p>
+<p>Additionally the <code class="docutils literal notranslate"><span class="pre">qemu_info_t</span></code> structure which is passed to the
+<code class="docutils literal notranslate"><span class="pre">qemu_plugin_install</span></code> method of a plugin will detail the minimum and
+current API versions supported by QEMU. The API version will be
+incremented if new APIs are added. The minimum API version will be
+incremented if existing APIs are changed or removed.</p>
+</div>
+<div class="section" id="lifetime-of-the-query-handle">
+<h3>Lifetime of the query handle<a class="headerlink" href="#lifetime-of-the-query-handle" title="Permalink to this headline">¶</a></h3>
+<p>Each callback provides an opaque anonymous information handle which
+can usually be further queried to find out information about a
+translation, instruction or operation. The handles themselves are only
+valid during the lifetime of the callback so it is important that any
+information that is needed is extracted during the callback and saved
+by the plugin.</p>
+</div>
+<div class="section" id="plugin-life-cycle">
+<h3>Plugin life cycle<a class="headerlink" href="#plugin-life-cycle" title="Permalink to this headline">¶</a></h3>
+<p>First the plugin is loaded and the public qemu_plugin_install function
+is called. The plugin will then register callbacks for various plugin
+events. Generally plugins will register a handler for the <em>atexit</em>
+if they want to dump a summary of collected information once the
+program/system has finished running.</p>
+<p>When a registered event occurs the plugin callback is invoked. The
+callbacks may provide additional information. In the case of a
+translation event the plugin has an option to enumerate the
+instructions in a block of instructions and optionally register
+callbacks to some or all instructions when they are executed.</p>
+<p>There is also a facility to add an inline event where code to
+increment a counter can be directly inlined with the translation.
+Currently only a simple increment is supported. This is not atomic so
+can miss counts. If you want absolute precision you should use a
+callback which can then ensure atomicity itself.</p>
+<p>Finally when QEMU exits all the registered <em>atexit</em> callbacks are
+invoked.</p>
+</div>
+<div class="section" id="exposure-of-qemu-internals">
+<h3>Exposure of QEMU internals<a class="headerlink" href="#exposure-of-qemu-internals" title="Permalink to this headline">¶</a></h3>
+<p>The plugin architecture actively avoids leaking implementation details
+about how QEMU’s translation works to the plugins. While there are
+conceptions such as translation time and translation blocks the
+details are opaque to plugins. The plugin is able to query select
+details of instructions and system configuration only through the
+exported <em>qemu_plugin</em> functions.</p>
+</div>
+<div class="section" id="api">
+<h3>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h3>
+<dl class="c type">
+<dt id="c.qemu_plugin_id_t">
+<em class="property">type </em><code class="sig-name descname">qemu_plugin_id_t</code><a class="headerlink" href="#c.qemu_plugin_id_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Unique plugin ID</p>
+</dd></dl>
+
+<dl class="c struct">
+<dt id="c.qemu_info_t">
+<em class="property">struct </em><code class="sig-name descname">qemu_info_t</code><a class="headerlink" href="#c.qemu_info_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>system information for plugins</p>
+</dd></dl>
+
+<p><strong>Definition</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">struct</span> <span class="n">qemu_info_t</span> <span class="p">{</span>
+  <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">target_name</span><span class="p">;</span>
+  <span class="n">struct</span> <span class="p">{</span>
+    <span class="nb">int</span> <span class="nb">min</span><span class="p">;</span>
+    <span class="nb">int</span> <span class="n">cur</span><span class="p">;</span>
+  <span class="p">}</span> <span class="n">version</span><span class="p">;</span>
+  <span class="nb">bool</span> <span class="n">system_emulation</span><span class="p">;</span>
+  <span class="n">union</span> <span class="p">{</span>
+    <span class="n">struct</span> <span class="p">{</span>
+      <span class="nb">int</span> <span class="n">smp_vcpus</span><span class="p">;</span>
+      <span class="nb">int</span> <span class="n">max_vcpus</span><span class="p">;</span>
+    <span class="p">}</span> <span class="n">system</span><span class="p">;</span>
+  <span class="p">};</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p><strong>Members</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">target_name</span></code></dt><dd><p>string describing architecture</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">version</span></code></dt><dd><p>minimum and current plugin API level</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">system_emulation</span></code></dt><dd><p>is this a full system emulation?</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">{unnamed_union}</span></code></dt><dd><p>anonymous</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">system</span></code></dt><dd><p>information relevant to system emulation</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>This structure provides for some limited information about the
+system to allow the plugin to make decisions on how to proceed. For
+example it might only be suitable for running on some guest
+architectures or when under full system emulation.</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_install">
+int <code class="sig-name descname">qemu_plugin_install</code><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t">qemu_plugin_id_t</a> <em>id</em>, <em class="property">const</em> <a class="reference internal" href="#c.qemu_info_t" title="qemu_info_t">qemu_info_t</a> *<em>info</em>, int <em>argc</em>, char **<em>argv</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_install" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Install a plugin</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>this plugin’s opaque ID</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">qemu_info_t</span> <span class="pre">*info</span></code></dt><dd><p>a block describing some details about the guest</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">argc</span></code></dt><dd><p>number of arguments</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">char</span> <span class="pre">**argv</span></code></dt><dd><p>array of arguments (<strong>argc</strong> elements)</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>All plugins must export this symbol which is called when the plugin
+is first loaded. Calling qemu_plugin_uninstall() from this function
+is a bug.</p>
+<p><strong>Note</strong></p>
+<p><strong>info</strong> is only live during the call. Copy any information we
+want to keep. <strong>argv</strong> remains valid throughout the lifetime of the
+loaded plugin.</p>
+<p><strong>Return</strong></p>
+<p>0 on successful loading, !0 for an error.</p>
+<dl class="c macro">
+<dt id="c.qemu_plugin_simple_cb_t">
+<code class="sig-name descname">qemu_plugin_simple_cb_t</code><a class="headerlink" href="#c.qemu_plugin_simple_cb_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><strong>Typedef</strong>: simple callback</p>
+</dd></dl>
+
+<p><strong>Syntax</strong></p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">qemu_plugin_simple_cb_t</span> <span class="pre">(qemu_plugin_id_t</span> <span class="pre">id)</span></code></p>
+</div></blockquote>
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>the unique qemu_plugin_id_t</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>This callback passes no information aside from the unique <strong>id</strong>.</p>
+<dl class="c macro">
+<dt id="c.qemu_plugin_udata_cb_t">
+<code class="sig-name descname">qemu_plugin_udata_cb_t</code><a class="headerlink" href="#c.qemu_plugin_udata_cb_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><strong>Typedef</strong>: callback with user data</p>
+</dd></dl>
+
+<p><strong>Syntax</strong></p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">qemu_plugin_udata_cb_t</span> <span class="pre">(qemu_plugin_id_t</span> <span class="pre">id,</span> <span class="pre">void</span> <span class="pre">*userdata)</span></code></p>
+</div></blockquote>
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>the unique qemu_plugin_id_t</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">*userdata</span></code></dt><dd><p>a pointer to some user data supplied when the callback
+was registered.</p>
+</dd>
+</dl>
+<dl class="c macro">
+<dt id="c.qemu_plugin_vcpu_simple_cb_t">
+<code class="sig-name descname">qemu_plugin_vcpu_simple_cb_t</code><a class="headerlink" href="#c.qemu_plugin_vcpu_simple_cb_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><strong>Typedef</strong>: vcpu callback</p>
+</dd></dl>
+
+<p><strong>Syntax</strong></p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">qemu_plugin_vcpu_simple_cb_t</span> <span class="pre">(qemu_plugin_id_t</span> <span class="pre">id,</span> <span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">vcpu_index)</span></code></p>
+</div></blockquote>
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>the unique qemu_plugin_id_t</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">vcpu_index</span></code></dt><dd><p>the current vcpu context</p>
+</dd>
+</dl>
+<dl class="c macro">
+<dt id="c.qemu_plugin_vcpu_udata_cb_t">
+<code class="sig-name descname">qemu_plugin_vcpu_udata_cb_t</code><a class="headerlink" href="#c.qemu_plugin_vcpu_udata_cb_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><strong>Typedef</strong>: vcpu callback</p>
+</dd></dl>
+
+<p><strong>Syntax</strong></p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">qemu_plugin_vcpu_udata_cb_t</span> <span class="pre">(unsigned</span> <span class="pre">int</span> <span class="pre">vcpu_index,</span> <span class="pre">void</span> <span class="pre">*userdata)</span></code></p>
+</div></blockquote>
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">vcpu_index</span></code></dt><dd><p>the current vcpu context</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">*userdata</span></code></dt><dd><p>a pointer to some user data supplied when the callback
+was registered.</p>
+</dd>
+</dl>
+<dl class="c function">
+<dt id="c.qemu_plugin_uninstall">
+void <code class="sig-name descname">qemu_plugin_uninstall</code><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t">qemu_plugin_id_t</a> <em>id</em>, <a class="reference internal" href="#c.qemu_plugin_simple_cb_t" title="qemu_plugin_simple_cb_t">qemu_plugin_simple_cb_t</a> <em>cb</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_uninstall" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Uninstall a plugin</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>this plugin’s opaque ID</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_simple_cb_t</span> <span class="pre">cb</span></code></dt><dd><p>callback to be called once the plugin has been removed</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>Do NOT assume that the plugin has been uninstalled once this function
+returns. Plugins are uninstalled asynchronously, and therefore the given
+plugin receives callbacks until <strong>cb</strong> is called.</p>
+<p><strong>Note</strong></p>
+<p>Calling this function from qemu_plugin_install() is a bug.</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_reset">
+void <code class="sig-name descname">qemu_plugin_reset</code><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t">qemu_plugin_id_t</a> <em>id</em>, <a class="reference internal" href="#c.qemu_plugin_simple_cb_t" title="qemu_plugin_simple_cb_t">qemu_plugin_simple_cb_t</a> <em>cb</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_reset" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Reset a plugin</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>this plugin’s opaque ID</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_simple_cb_t</span> <span class="pre">cb</span></code></dt><dd><p>callback to be called once the plugin has been reset</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>Unregisters all callbacks for the plugin given by <strong>id</strong>.</p>
+<p>Do NOT assume that the plugin has been reset once this function returns.
+Plugins are reset asynchronously, and therefore the given plugin receives
+callbacks until <strong>cb</strong> is called.</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_register_vcpu_init_cb">
+void <code class="sig-name descname">qemu_plugin_register_vcpu_init_cb</code><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t">qemu_plugin_id_t</a> <em>id</em>, <a class="reference internal" href="#c.qemu_plugin_vcpu_simple_cb_t" title="qemu_plugin_vcpu_simple_cb_t">qemu_plugin_vcpu_simple_cb_t</a> <em>cb</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_init_cb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>register a vCPU initialization callback</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>plugin ID</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_vcpu_simple_cb_t</span> <span class="pre">cb</span></code></dt><dd><p>callback function</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>The <strong>cb</strong> function is called every time a vCPU is initialized.</p>
+<p>See also: qemu_plugin_register_vcpu_exit_cb()</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_register_vcpu_exit_cb">
+void <code class="sig-name descname">qemu_plugin_register_vcpu_exit_cb</code><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t">qemu_plugin_id_t</a> <em>id</em>, <a class="reference internal" href="#c.qemu_plugin_vcpu_simple_cb_t" title="qemu_plugin_vcpu_simple_cb_t">qemu_plugin_vcpu_simple_cb_t</a> <em>cb</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_exit_cb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>register a vCPU exit callback</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>plugin ID</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_vcpu_simple_cb_t</span> <span class="pre">cb</span></code></dt><dd><p>callback function</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>The <strong>cb</strong> function is called every time a vCPU exits.</p>
+<p>See also: qemu_plugin_register_vcpu_init_cb()</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_register_vcpu_idle_cb">
+void <code class="sig-name descname">qemu_plugin_register_vcpu_idle_cb</code><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t">qemu_plugin_id_t</a> <em>id</em>, <a class="reference internal" href="#c.qemu_plugin_vcpu_simple_cb_t" title="qemu_plugin_vcpu_simple_cb_t">qemu_plugin_vcpu_simple_cb_t</a> <em>cb</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_idle_cb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>register a vCPU idle callback</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>plugin ID</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_vcpu_simple_cb_t</span> <span class="pre">cb</span></code></dt><dd><p>callback function</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>The <strong>cb</strong> function is called every time a vCPU idles.</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_register_vcpu_resume_cb">
+void <code class="sig-name descname">qemu_plugin_register_vcpu_resume_cb</code><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t">qemu_plugin_id_t</a> <em>id</em>, <a class="reference internal" href="#c.qemu_plugin_vcpu_simple_cb_t" title="qemu_plugin_vcpu_simple_cb_t">qemu_plugin_vcpu_simple_cb_t</a> <em>cb</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_resume_cb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>register a vCPU resume callback</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>plugin ID</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_vcpu_simple_cb_t</span> <span class="pre">cb</span></code></dt><dd><p>callback function</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>The <strong>cb</strong> function is called every time a vCPU resumes execution.</p>
+<dl class="c enum">
+<dt id="c.qemu_plugin_cb_flags">
+<em class="property">enum </em><code class="sig-name descname">qemu_plugin_cb_flags</code><a class="headerlink" href="#c.qemu_plugin_cb_flags" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>type of callback</p>
+</dd></dl>
+
+<p><strong>Constants</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_CB_NO_REGS</span></code></dt><dd><p>callback does not access the CPU’s regs</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_CB_R_REGS</span></code></dt><dd><p>callback reads the CPU’s regs</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_CB_RW_REGS</span></code></dt><dd><p>callback reads and writes the CPU’s regs</p>
+</dd>
+</dl>
+<p><strong>Note</strong></p>
+<p>currently unused, plugins cannot read or change system
+register state.</p>
+<dl class="c macro">
+<dt id="c.qemu_plugin_vcpu_tb_trans_cb_t">
+<code class="sig-name descname">qemu_plugin_vcpu_tb_trans_cb_t</code><a class="headerlink" href="#c.qemu_plugin_vcpu_tb_trans_cb_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><strong>Typedef</strong>: translation callback</p>
+</dd></dl>
+
+<p><strong>Syntax</strong></p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">qemu_plugin_vcpu_tb_trans_cb_t</span> <span class="pre">(qemu_plugin_id_t</span> <span class="pre">id,</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_tb</span> <span class="pre">*tb)</span></code></p>
+</div></blockquote>
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>unique plugin id</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">qemu_plugin_tb</span> <span class="pre">*tb</span></code></dt><dd><p>opaque handle used for querying and instrumenting a block.</p>
+</dd>
+</dl>
+<dl class="c function">
+<dt id="c.qemu_plugin_register_vcpu_tb_trans_cb">
+void <code class="sig-name descname">qemu_plugin_register_vcpu_tb_trans_cb</code><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t">qemu_plugin_id_t</a> <em>id</em>, <a class="reference internal" href="#c.qemu_plugin_vcpu_tb_trans_cb_t" title="qemu_plugin_vcpu_tb_trans_cb_t">qemu_plugin_vcpu_tb_trans_cb_t</a> <em>cb</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_tb_trans_cb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>register a translate cb</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>plugin ID</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_vcpu_tb_trans_cb_t</span> <span class="pre">cb</span></code></dt><dd><p>callback function</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>The <strong>cb</strong> function is called every time a translation occurs. The <strong>cb</strong>
+function is passed an opaque qemu_plugin_type which it can query
+for additional information including the list of translated
+instructions. At this point the plugin can register further
+callbacks to be triggered when the block or individual instruction
+executes.</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_register_vcpu_tb_exec_cb">
+void <code class="sig-name descname">qemu_plugin_register_vcpu_tb_exec_cb</code><span class="sig-paren">(</span><em class="property">struct</em> qemu_plugin_tb *<em>tb</em>, <a class="reference internal" href="#c.qemu_plugin_vcpu_udata_cb_t" title="qemu_plugin_vcpu_udata_cb_t">qemu_plugin_vcpu_udata_cb_t</a> <em>cb</em>, <em class="property">enum</em> <a class="reference internal" href="#c.qemu_plugin_cb_flags" title="qemu_plugin_cb_flags">qemu_plugin_cb_flags</a> <em>flags</em>, void *<em>userdata</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_tb_exec_cb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>register execution callback</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">qemu_plugin_tb</span> <span class="pre">*tb</span></code></dt><dd><p>the opaque qemu_plugin_tb handle for the translation</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_vcpu_udata_cb_t</span> <span class="pre">cb</span></code></dt><dd><p>callback function</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">enum</span> <span class="pre">qemu_plugin_cb_flags</span> <span class="pre">flags</span></code></dt><dd><p>does the plugin read or write the CPU’s registers?</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">*userdata</span></code></dt><dd><p>any plugin data to pass to the <strong>cb</strong>?</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>The <strong>cb</strong> function is called every time a translated unit executes.</p>
+<dl class="c enum">
+<dt id="c.qemu_plugin_op">
+<em class="property">enum </em><code class="sig-name descname">qemu_plugin_op</code><a class="headerlink" href="#c.qemu_plugin_op" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>describes an inline op</p>
+</dd></dl>
+
+<p><strong>Constants</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_INLINE_ADD_U64</span></code></dt><dd><p>add an immediate value uint64_t</p>
+</dd>
+</dl>
+<p><strong>Note</strong></p>
+<p>currently only a single inline op is supported.</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_register_vcpu_tb_exec_inline">
+void <code class="sig-name descname">qemu_plugin_register_vcpu_tb_exec_inline</code><span class="sig-paren">(</span><em class="property">struct</em> qemu_plugin_tb *<em>tb</em>, <em class="property">enum</em> <a class="reference internal" href="#c.qemu_plugin_op" title="qemu_plugin_op">qemu_plugin_op</a> <em>op</em>, void *<em>ptr</em>, uint64_t <em>imm</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_tb_exec_inline" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>execution inline op</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">qemu_plugin_tb</span> <span class="pre">*tb</span></code></dt><dd><p>the opaque qemu_plugin_tb handle for the translation</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">enum</span> <span class="pre">qemu_plugin_op</span> <span class="pre">op</span></code></dt><dd><p>the type of qemu_plugin_op (e.g. ADD_U64)</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">*ptr</span></code></dt><dd><p>the target memory location for the op</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">imm</span></code></dt><dd><p>the op data (e.g. 1)</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>Insert an inline op to every time a translated unit executes.
+Useful if you just want to increment a single counter somewhere in
+memory.</p>
+<p><strong>Note</strong></p>
+<p>ops are not atomic so in multi-threaded/multi-smp situations
+you will get inexact results.</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_register_vcpu_insn_exec_cb">
+void <code class="sig-name descname">qemu_plugin_register_vcpu_insn_exec_cb</code><span class="sig-paren">(</span><em class="property">struct</em> qemu_plugin_insn *<em>insn</em>, <a class="reference internal" href="#c.qemu_plugin_vcpu_udata_cb_t" title="qemu_plugin_vcpu_udata_cb_t">qemu_plugin_vcpu_udata_cb_t</a> <em>cb</em>, <em class="property">enum</em> <a class="reference internal" href="#c.qemu_plugin_cb_flags" title="qemu_plugin_cb_flags">qemu_plugin_cb_flags</a> <em>flags</em>, void *<em>userdata</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_insn_exec_cb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>register insn execution cb</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">qemu_plugin_insn</span> <span class="pre">*insn</span></code></dt><dd><p>the opaque qemu_plugin_insn handle for an instruction</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_vcpu_udata_cb_t</span> <span class="pre">cb</span></code></dt><dd><p>callback function</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">enum</span> <span class="pre">qemu_plugin_cb_flags</span> <span class="pre">flags</span></code></dt><dd><p>does the plugin read or write the CPU’s registers?</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">*userdata</span></code></dt><dd><p>any plugin data to pass to the <strong>cb</strong>?</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>The <strong>cb</strong> function is called every time an instruction is executed</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_register_vcpu_insn_exec_inline">
+void <code class="sig-name descname">qemu_plugin_register_vcpu_insn_exec_inline</code><span class="sig-paren">(</span><em class="property">struct</em> qemu_plugin_insn *<em>insn</em>, <em class="property">enum</em> <a class="reference internal" href="#c.qemu_plugin_op" title="qemu_plugin_op">qemu_plugin_op</a> <em>op</em>, void *<em>ptr</em>, uint64_t <em>imm</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_insn_exec_inline" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>insn execution inline op</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">qemu_plugin_insn</span> <span class="pre">*insn</span></code></dt><dd><p>the opaque qemu_plugin_insn handle for an instruction</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">enum</span> <span class="pre">qemu_plugin_op</span> <span class="pre">op</span></code></dt><dd><p>the type of qemu_plugin_op (e.g. ADD_U64)</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">*ptr</span></code></dt><dd><p>the target memory location for the op</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">imm</span></code></dt><dd><p>the op data (e.g. 1)</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>Insert an inline op to every time an instruction executes. Useful
+if you just want to increment a single counter somewhere in memory.</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_tb_n_insns">
+size_t <code class="sig-name descname">qemu_plugin_tb_n_insns</code><span class="sig-paren">(</span><em class="property">const</em> <em class="property">struct</em> qemu_plugin_tb *<em>tb</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_tb_n_insns" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>query helper for number of insns in TB</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_tb</span> <span class="pre">*tb</span></code></dt><dd><p>opaque handle to TB passed to callback</p>
+</dd>
+</dl>
+<p><strong>Return</strong></p>
+<p>number of instructions in this block</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_tb_vaddr">
+uint64_t <code class="sig-name descname">qemu_plugin_tb_vaddr</code><span class="sig-paren">(</span><em class="property">const</em> <em class="property">struct</em> qemu_plugin_tb *<em>tb</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_tb_vaddr" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>query helper for vaddr of TB start</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_tb</span> <span class="pre">*tb</span></code></dt><dd><p>opaque handle to TB passed to callback</p>
+</dd>
+</dl>
+<p><strong>Return</strong></p>
+<p>virtual address of block start</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_tb_get_insn">
+<em class="property">struct</em> qemu_plugin_insn *<code class="sig-name descname">qemu_plugin_tb_get_insn</code><span class="sig-paren">(</span><em class="property">const</em> <em class="property">struct</em> qemu_plugin_tb *<em>tb</em>, size_t <em>idx</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_tb_get_insn" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>retrieve handle for instruction</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_tb</span> <span class="pre">*tb</span></code></dt><dd><p>opaque handle to TB passed to callback</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">size_t</span> <span class="pre">idx</span></code></dt><dd><p>instruction number, 0 indexed</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>The returned handle can be used in follow up helper queries as well
+as when instrumenting an instruction. It is only valid for the
+lifetime of the callback.</p>
+<p><strong>Return</strong></p>
+<p>opaque handle to instruction</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_insn_data">
+<em class="property">const</em> void *<code class="sig-name descname">qemu_plugin_insn_data</code><span class="sig-paren">(</span><em class="property">const</em> <em class="property">struct</em> qemu_plugin_insn *<em>insn</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_insn_data" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>return ptr to instruction data</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_insn</span> <span class="pre">*insn</span></code></dt><dd><p>opaque instruction handle from qemu_plugin_tb_get_insn()</p>
+</dd>
+</dl>
+<p><strong>Note</strong></p>
+<p>data is only valid for duration of callback. See
+qemu_plugin_insn_size() to calculate size of stream.</p>
+<p><strong>Return</strong></p>
+<p>pointer to a stream of bytes containing the value of this
+instructions opcode.</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_insn_size">
+size_t <code class="sig-name descname">qemu_plugin_insn_size</code><span class="sig-paren">(</span><em class="property">const</em> <em class="property">struct</em> qemu_plugin_insn *<em>insn</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_insn_size" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>return size of instruction</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_insn</span> <span class="pre">*insn</span></code></dt><dd><p>opaque instruction handle from qemu_plugin_tb_get_insn()</p>
+</dd>
+</dl>
+<p><strong>Return</strong></p>
+<p>size of instruction in bytes</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_insn_vaddr">
+uint64_t <code class="sig-name descname">qemu_plugin_insn_vaddr</code><span class="sig-paren">(</span><em class="property">const</em> <em class="property">struct</em> qemu_plugin_insn *<em>insn</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_insn_vaddr" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>return vaddr of instruction</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_insn</span> <span class="pre">*insn</span></code></dt><dd><p>opaque instruction handle from qemu_plugin_tb_get_insn()</p>
+</dd>
+</dl>
+<p><strong>Return</strong></p>
+<p>virtual address of instruction</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_insn_haddr">
+void *<code class="sig-name descname">qemu_plugin_insn_haddr</code><span class="sig-paren">(</span><em class="property">const</em> <em class="property">struct</em> qemu_plugin_insn *<em>insn</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_insn_haddr" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>return hardware addr of instruction</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_insn</span> <span class="pre">*insn</span></code></dt><dd><p>opaque instruction handle from qemu_plugin_tb_get_insn()</p>
+</dd>
+</dl>
+<p><strong>Return</strong></p>
+<p>hardware (physical) target address of instruction</p>
+<dl class="c type">
+<dt id="c.qemu_plugin_meminfo_t">
+<em class="property">type </em><code class="sig-name descname">qemu_plugin_meminfo_t</code><a class="headerlink" href="#c.qemu_plugin_meminfo_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>opaque memory transaction handle</p>
+</dd></dl>
+
+<p><strong>Description</strong></p>
+<p>This can be further queried using the qemu_plugin_mem_* query
+functions.</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_mem_size_shift">
+unsigned int <code class="sig-name descname">qemu_plugin_mem_size_shift</code><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_meminfo_t" title="qemu_plugin_meminfo_t">qemu_plugin_meminfo_t</a> <em>info</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_mem_size_shift" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>get size of access</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_meminfo_t</span> <span class="pre">info</span></code></dt><dd><p>opaque memory transaction handle</p>
+</dd>
+</dl>
+<p><strong>Return</strong></p>
+<p>size of access in ^2 (0=byte, 1=16bit, 2=32bit etc…)</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_mem_is_sign_extended">
+bool <code class="sig-name descname">qemu_plugin_mem_is_sign_extended</code><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_meminfo_t" title="qemu_plugin_meminfo_t">qemu_plugin_meminfo_t</a> <em>info</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_mem_is_sign_extended" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>was the access sign extended</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_meminfo_t</span> <span class="pre">info</span></code></dt><dd><p>opaque memory transaction handle</p>
+</dd>
+</dl>
+<p><strong>Return</strong></p>
+<p>true if it was, otherwise false</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_mem_is_big_endian">
+bool <code class="sig-name descname">qemu_plugin_mem_is_big_endian</code><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_meminfo_t" title="qemu_plugin_meminfo_t">qemu_plugin_meminfo_t</a> <em>info</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_mem_is_big_endian" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>was the access big endian</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_meminfo_t</span> <span class="pre">info</span></code></dt><dd><p>opaque memory transaction handle</p>
+</dd>
+</dl>
+<p><strong>Return</strong></p>
+<p>true if it was, otherwise false</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_mem_is_store">
+bool <code class="sig-name descname">qemu_plugin_mem_is_store</code><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_meminfo_t" title="qemu_plugin_meminfo_t">qemu_plugin_meminfo_t</a> <em>info</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_mem_is_store" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>was the access a store</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_meminfo_t</span> <span class="pre">info</span></code></dt><dd><p>opaque memory transaction handle</p>
+</dd>
+</dl>
+<p><strong>Return</strong></p>
+<p>true if it was, otherwise false</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_get_hwaddr">
+<em class="property">struct</em> qemu_plugin_hwaddr *<code class="sig-name descname">qemu_plugin_get_hwaddr</code><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_meminfo_t" title="qemu_plugin_meminfo_t">qemu_plugin_meminfo_t</a> <em>info</em>, uint64_t <em>vaddr</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_get_hwaddr" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>return handle for memory operation</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_meminfo_t</span> <span class="pre">info</span></code></dt><dd><p>opaque memory info structure</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">vaddr</span></code></dt><dd><p>the virtual address of the memory operation</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>For system emulation returns a qemu_plugin_hwaddr handle to query
+details about the actual physical address backing the virtual
+address. For linux-user guests it just returns NULL.</p>
+<p>This handle is <em>only</em> valid for the duration of the callback. Any
+information about the handle should be recovered before the
+callback returns.</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_hwaddr_is_io">
+bool <code class="sig-name descname">qemu_plugin_hwaddr_is_io</code><span class="sig-paren">(</span><em class="property">const</em> <em class="property">struct</em> qemu_plugin_hwaddr *<em>haddr</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_hwaddr_is_io" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>query whether memory operation is IO</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_hwaddr</span> <span class="pre">*haddr</span></code></dt><dd><p>address handle from qemu_plugin_get_hwaddr()</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>Returns true if the handle’s memory operation is to memory-mapped IO, or
+false if it is to RAM</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_hwaddr_phys_addr">
+uint64_t <code class="sig-name descname">qemu_plugin_hwaddr_phys_addr</code><span class="sig-paren">(</span><em class="property">const</em> <em class="property">struct</em> qemu_plugin_hwaddr *<em>haddr</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_hwaddr_phys_addr" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>query physical address for memory operation</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_hwaddr</span> <span class="pre">*haddr</span></code></dt><dd><p>address handle from qemu_plugin_get_hwaddr()</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>Returns the physical address associated with the memory operation</p>
+<p>Note that the returned physical address may not be unique if you are dealing
+with multiple address spaces.</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_insn_disas">
+char *<code class="sig-name descname">qemu_plugin_insn_disas</code><span class="sig-paren">(</span><em class="property">const</em> <em class="property">struct</em> qemu_plugin_insn *<em>insn</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_insn_disas" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>return disassembly string for instruction</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_insn</span> <span class="pre">*insn</span></code></dt><dd><p>instruction reference</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>Returns an allocated string containing the disassembly</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_insn_symbol">
+<em class="property">const</em> char *<code class="sig-name descname">qemu_plugin_insn_symbol</code><span class="sig-paren">(</span><em class="property">const</em> <em class="property">struct</em> qemu_plugin_insn *<em>insn</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_insn_symbol" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>best effort symbol lookup</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_insn</span> <span class="pre">*insn</span></code></dt><dd><p>instruction reference</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>Return a static string referring to the symbol. This is dependent
+on the binary QEMU is running having provided a symbol table.</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_vcpu_for_each">
+void <code class="sig-name descname">qemu_plugin_vcpu_for_each</code><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t">qemu_plugin_id_t</a> <em>id</em>, <a class="reference internal" href="#c.qemu_plugin_vcpu_simple_cb_t" title="qemu_plugin_vcpu_simple_cb_t">qemu_plugin_vcpu_simple_cb_t</a> <em>cb</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_vcpu_for_each" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>iterate over the existing vCPU</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>plugin ID</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_vcpu_simple_cb_t</span> <span class="pre">cb</span></code></dt><dd><p>callback function</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>The <strong>cb</strong> function is called once for each existing vCPU.</p>
+<p>See also: qemu_plugin_register_vcpu_init_cb()</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_register_atexit_cb">
+void <code class="sig-name descname">qemu_plugin_register_atexit_cb</code><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t">qemu_plugin_id_t</a> <em>id</em>, <a class="reference internal" href="#c.qemu_plugin_udata_cb_t" title="qemu_plugin_udata_cb_t">qemu_plugin_udata_cb_t</a> <em>cb</em>, void *<em>userdata</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_atexit_cb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>register exit callback</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>plugin ID</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_udata_cb_t</span> <span class="pre">cb</span></code></dt><dd><p>callback</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">*userdata</span></code></dt><dd><p>user data for callback</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>The <strong>cb</strong> function is called once execution has finished. Plugins
+should be able to free all their resources at this point much like
+after a reset/uninstall callback is called.</p>
+<p>In user-mode it is possible a few un-instrumented instructions from
+child threads may run before the host kernel reaps the threads.</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_outs">
+void <code class="sig-name descname">qemu_plugin_outs</code><span class="sig-paren">(</span><em class="property">const</em> char *<em>string</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_outs" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>output string via QEMU’s logging system</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*string</span></code></dt><dd><p>a string</p>
+</dd>
+</dl>
+<dl class="c function">
+<dt id="c.qemu_plugin_bool_parse">
+bool <code class="sig-name descname">qemu_plugin_bool_parse</code><span class="sig-paren">(</span><em class="property">const</em> char *<em>name</em>, <em class="property">const</em> char *<em>val</em>, bool *<em>ret</em><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_bool_parse" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>parses a boolean argument in the form of “&lt;argname&gt;=[on|yes|true|off|no|false]”</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*name</span></code></dt><dd><p>argument name, the part before the equals sign</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*val</span></code></dt><dd><p>argument value, what’s after the equals sign</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">bool</span> <span class="pre">*ret</span></code></dt><dd><p>output return value</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>returns true if the combination <strong>name**=**val</strong> parses correctly to a boolean
+argument, and false otherwise</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_path_to_binary">
+<em class="property">const</em> char *<code class="sig-name descname">qemu_plugin_path_to_binary</code><span class="sig-paren">(</span>void<span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_path_to_binary" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>path to binary file being executed</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">void</span></code></dt><dd><p>no arguments</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>Return a string representing the path to the binary. For user-mode
+this is the main executable. For system emulation we currently
+return NULL. The user should g_free() the string once no longer
+needed.</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_start_code">
+uint64_t <code class="sig-name descname">qemu_plugin_start_code</code><span class="sig-paren">(</span>void<span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_start_code" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>returns start of text segment</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">void</span></code></dt><dd><p>no arguments</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>Returns the nominal start address of the main text segment in
+user-mode. Currently returns 0 for system emulation.</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_end_code">
+uint64_t <code class="sig-name descname">qemu_plugin_end_code</code><span class="sig-paren">(</span>void<span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_end_code" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>returns end of text segment</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">void</span></code></dt><dd><p>no arguments</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>Returns the nominal end address of the main text segment in
+user-mode. Currently returns 0 for system emulation.</p>
+<dl class="c function">
+<dt id="c.qemu_plugin_entry_code">
+uint64_t <code class="sig-name descname">qemu_plugin_entry_code</code><span class="sig-paren">(</span>void<span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_entry_code" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>returns start address for module</p>
+</dd></dl>
+
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">void</span></code></dt><dd><p>no arguments</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>Returns the nominal entry address of the main text segment in
+user-mode. Currently returns 0 for system emulation.</p>
+</div>
+</div>
+<div class="section" id="internals">
+<h2>Internals<a class="headerlink" href="#internals" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="locking">
+<h3>Locking<a class="headerlink" href="#locking" title="Permalink to this headline">¶</a></h3>
+<p>We have to ensure we cannot deadlock, particularly under MTTCG. For
+this we acquire a lock when called from plugin code. We also keep the
+list of callbacks under RCU so that we do not have to hold the lock
+when calling the callbacks. This is also for performance, since some
+callbacks (e.g. memory access callbacks) might be called very
+frequently.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>A consequence of this is that we keep our own list of CPUs, so that
+we do not have to worry about locking order wrt cpu_list_lock.</p></li>
+<li><p>Use a recursive lock, since we can get registration calls from
+callbacks.</p></li>
+</ul>
+</div></blockquote>
+<p>As a result registering/unregistering callbacks is “slow”, since it
+takes a lock. But this is very infrequent; we want performance when
+calling (or not calling) callbacks, not when registering them. Using
+RCU is great for this.</p>
+<p>We support the uninstallation of a plugin at any time (e.g. from
+plugin callbacks). This allows plugins to remove themselves if they no
+longer want to instrument the code. This operation is asynchronous
+which means callbacks may still occur after the uninstall operation is
+requested. The plugin isn’t completely uninstalled until the safe work
+has executed while all vCPUs are quiescent.</p>
+</div>
+</div>
+<div class="section" id="example-plugins">
+<h2>Example Plugins<a class="headerlink" href="#example-plugins" title="Permalink to this headline">¶</a></h2>
+<p>There are a number of plugins included with QEMU and you are
+encouraged to contribute your own plugins plugins upstream. There is a
+<code class="docutils literal notranslate"><span class="pre">contrib/plugins</span></code> directory where they can go.</p>
+<ul class="simple">
+<li><p>tests/plugins</p></li>
+</ul>
+<p>These are some basic plugins that are used to test and exercise the
+API during the <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">check-tcg</span></code> target.</p>
+<ul class="simple">
+<li><p>contrib/plugins/hotblocks.c</p></li>
+</ul>
+<p>The hotblocks plugin allows you to examine the where hot paths of
+execution are in your program. Once the program has finished you will
+get a sorted list of blocks reporting the starting PC, translation
+count, number of instructions and execution count. This will work best
+with linux-user execution as system emulation tends to generate
+re-translations as blocks from different programs get swapped in and
+out of system memory.</p>
+<p>If your program is single-threaded you can use the <code class="docutils literal notranslate"><span class="pre">inline</span></code> option for
+slightly faster (but not thread safe) counters.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">aarch64</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">user</span><span class="o">/</span><span class="n">qemu</span><span class="o">-</span><span class="n">aarch64</span> \
+  <span class="o">-</span><span class="n">plugin</span> <span class="n">contrib</span><span class="o">/</span><span class="n">plugins</span><span class="o">/</span><span class="n">libhotblocks</span><span class="o">.</span><span class="n">so</span> <span class="o">-</span><span class="n">d</span> <span class="n">plugin</span> \
+  <span class="o">./</span><span class="n">tests</span><span class="o">/</span><span class="n">tcg</span><span class="o">/</span><span class="n">aarch64</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">user</span><span class="o">/</span><span class="n">sha1</span>
+<span class="n">SHA1</span><span class="o">=</span><span class="mi">15</span><span class="n">dd99a1991e0b3826fede3deffc1feba42278e6</span>
+<span class="n">collected</span> <span class="mi">903</span> <span class="n">entries</span> <span class="ow">in</span> <span class="n">the</span> <span class="nb">hash</span> <span class="n">table</span>
+<span class="n">pc</span><span class="p">,</span> <span class="n">tcount</span><span class="p">,</span> <span class="n">icount</span><span class="p">,</span> <span class="n">ecount</span>
+<span class="mh">0x0000000041ed10</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">66087</span>
+<span class="mh">0x000000004002b0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">66087</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>contrib/plugins/hotpages.c</p></li>
+</ul>
+<p>Similar to hotblocks but this time tracks memory accesses:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">aarch64</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">user</span><span class="o">/</span><span class="n">qemu</span><span class="o">-</span><span class="n">aarch64</span> \
+  <span class="o">-</span><span class="n">plugin</span> <span class="n">contrib</span><span class="o">/</span><span class="n">plugins</span><span class="o">/</span><span class="n">libhotpages</span><span class="o">.</span><span class="n">so</span> <span class="o">-</span><span class="n">d</span> <span class="n">plugin</span> \
+  <span class="o">./</span><span class="n">tests</span><span class="o">/</span><span class="n">tcg</span><span class="o">/</span><span class="n">aarch64</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">user</span><span class="o">/</span><span class="n">sha1</span>
+<span class="n">SHA1</span><span class="o">=</span><span class="mi">15</span><span class="n">dd99a1991e0b3826fede3deffc1feba42278e6</span>
+<span class="n">Addr</span><span class="p">,</span> <span class="n">RCPUs</span><span class="p">,</span> <span class="n">Reads</span><span class="p">,</span> <span class="n">WCPUs</span><span class="p">,</span> <span class="n">Writes</span>
+<span class="mh">0x000055007fe000</span><span class="p">,</span> <span class="mh">0x0001</span><span class="p">,</span> <span class="mi">31747952</span><span class="p">,</span> <span class="mh">0x0001</span><span class="p">,</span> <span class="mi">8835161</span>
+<span class="mh">0x000055007ff000</span><span class="p">,</span> <span class="mh">0x0001</span><span class="p">,</span> <span class="mi">29001054</span><span class="p">,</span> <span class="mh">0x0001</span><span class="p">,</span> <span class="mi">8780625</span>
+<span class="mh">0x00005500800000</span><span class="p">,</span> <span class="mh">0x0001</span><span class="p">,</span> <span class="mi">687465</span><span class="p">,</span> <span class="mh">0x0001</span><span class="p">,</span> <span class="mi">335857</span>
+<span class="mh">0x0000000048b000</span><span class="p">,</span> <span class="mh">0x0001</span><span class="p">,</span> <span class="mi">130594</span><span class="p">,</span> <span class="mh">0x0001</span><span class="p">,</span> <span class="mi">355</span>
+<span class="mh">0x0000000048a000</span><span class="p">,</span> <span class="mh">0x0001</span><span class="p">,</span> <span class="mi">1826</span><span class="p">,</span> <span class="mh">0x0001</span><span class="p">,</span> <span class="mi">11</span>
+</pre></div>
+</div>
+<p>The hotpages plugin can be configured using the following arguments:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>sortby=reads|writes|address</p></li>
+</ul>
+<p>Log the data sorted by either the number of reads, the number of writes, or
+memory address. (Default: entries are sorted by the sum of reads and writes)</p>
+<ul class="simple">
+<li><p>io=on</p></li>
+</ul>
+<p>Track IO addresses. Only relevant to full system emulation. (Default: off)</p>
+<ul class="simple">
+<li><p>pagesize=N</p></li>
+</ul>
+<p>The page size used. (Default: N = 4096)</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>contrib/plugins/howvec.c</p></li>
+</ul>
+<p>This is an instruction classifier so can be used to count different
+types of instructions. It has a number of options to refine which get
+counted. You can give a value to the <code class="docutils literal notranslate"><span class="pre">count</span></code> argument for a class of
+instructions to break it down fully, so for example to see all the system
+registers accesses:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>./aarch64-softmmu/qemu-system-aarch64 $(QEMU_ARGS) \
+  -append &quot;root=/dev/sda2 systemd.unit=benchmark.service&quot; \
+  -smp 4 -plugin ./contrib/plugins/libhowvec.so,count=sreg -d plugin
+</pre></div>
+</div>
+<p>which will lead to a sorted list after the class breakdown:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Instruction</span> <span class="n">Classes</span><span class="p">:</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">UDEF</span>                   <span class="ow">not</span> <span class="n">counted</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">SVE</span>                    <span class="p">(</span><span class="mi">68</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">PCrel</span> <span class="n">addr</span>             <span class="p">(</span><span class="mi">47789483</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">Add</span><span class="o">/</span><span class="n">Sub</span> <span class="p">(</span><span class="n">imm</span><span class="p">)</span>          <span class="p">(</span><span class="mi">192817388</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">Logical</span> <span class="p">(</span><span class="n">imm</span><span class="p">)</span>          <span class="p">(</span><span class="mi">93852565</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">Move</span> <span class="n">Wide</span> <span class="p">(</span><span class="n">imm</span><span class="p">)</span>        <span class="p">(</span><span class="mi">76398116</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">Bitfield</span>               <span class="p">(</span><span class="mi">44706084</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">Extract</span>                <span class="p">(</span><span class="mi">5499257</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">Cond</span> <span class="n">Branch</span> <span class="p">(</span><span class="n">imm</span><span class="p">)</span>      <span class="p">(</span><span class="mi">147202932</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="ne">Exception</span> <span class="n">Gen</span>          <span class="p">(</span><span class="mi">193581</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span>     <span class="n">NOP</span>                  <span class="ow">not</span> <span class="n">counted</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">Hints</span>                  <span class="p">(</span><span class="mi">6652291</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">Barriers</span>               <span class="p">(</span><span class="mi">8001661</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">PSTATE</span>                 <span class="p">(</span><span class="mi">1801695</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">System</span> <span class="n">Insn</span>            <span class="p">(</span><span class="mi">6385349</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">System</span> <span class="n">Reg</span>             <span class="n">counted</span> <span class="n">individually</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">Branch</span> <span class="p">(</span><span class="n">reg</span><span class="p">)</span>           <span class="p">(</span><span class="mi">69497127</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">Branch</span> <span class="p">(</span><span class="n">imm</span><span class="p">)</span>           <span class="p">(</span><span class="mi">84393665</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">Cmp</span> <span class="o">&amp;</span> <span class="n">Branch</span>           <span class="p">(</span><span class="mi">110929659</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">Tst</span> <span class="o">&amp;</span> <span class="n">Branch</span>           <span class="p">(</span><span class="mi">44681442</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">AdvSimd</span> <span class="n">ldstmult</span>       <span class="p">(</span><span class="mi">736</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">ldst</span> <span class="n">excl</span>              <span class="p">(</span><span class="mi">9098783</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">Load</span> <span class="n">Reg</span> <span class="p">(</span><span class="n">lit</span><span class="p">)</span>         <span class="p">(</span><span class="mi">87189424</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">ldst</span> <span class="n">noalloc</span> <span class="n">pair</span>      <span class="p">(</span><span class="mi">3264433</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">ldst</span> <span class="n">pair</span>              <span class="p">(</span><span class="mi">412526434</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span>   <span class="n">ldst</span> <span class="n">reg</span> <span class="p">(</span><span class="n">imm</span><span class="p">)</span>         <span class="p">(</span><span class="mi">314734576</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span> <span class="n">Loads</span> <span class="o">&amp;</span> <span class="n">Stores</span>           <span class="p">(</span><span class="mi">2117774</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span> <span class="n">Data</span> <span class="n">Proc</span> <span class="n">Reg</span>            <span class="p">(</span><span class="mi">223519077</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Class</span><span class="p">:</span> <span class="n">Scalar</span> <span class="n">FP</span>                <span class="p">(</span><span class="mi">31657954</span> <span class="n">hits</span><span class="p">)</span>
+<span class="n">Individual</span> <span class="n">Instructions</span><span class="p">:</span>
+<span class="n">Instr</span><span class="p">:</span> <span class="n">mrs</span> <span class="n">x0</span><span class="p">,</span> <span class="n">sp_el0</span>           <span class="p">(</span><span class="mi">2682661</span> <span class="n">hits</span><span class="p">)</span>  <span class="p">(</span><span class="n">op</span><span class="o">=</span><span class="mh">0xd5384100</span><span class="o">/</span>  <span class="n">System</span> <span class="n">Reg</span><span class="p">)</span>
+<span class="n">Instr</span><span class="p">:</span> <span class="n">mrs</span> <span class="n">x1</span><span class="p">,</span> <span class="n">tpidr_el2</span>        <span class="p">(</span><span class="mi">1789339</span> <span class="n">hits</span><span class="p">)</span>  <span class="p">(</span><span class="n">op</span><span class="o">=</span><span class="mh">0xd53cd041</span><span class="o">/</span>  <span class="n">System</span> <span class="n">Reg</span><span class="p">)</span>
+<span class="n">Instr</span><span class="p">:</span> <span class="n">mrs</span> <span class="n">x2</span><span class="p">,</span> <span class="n">tpidr_el2</span>        <span class="p">(</span><span class="mi">1513494</span> <span class="n">hits</span><span class="p">)</span>  <span class="p">(</span><span class="n">op</span><span class="o">=</span><span class="mh">0xd53cd042</span><span class="o">/</span>  <span class="n">System</span> <span class="n">Reg</span><span class="p">)</span>
+<span class="n">Instr</span><span class="p">:</span> <span class="n">mrs</span> <span class="n">x0</span><span class="p">,</span> <span class="n">tpidr_el2</span>        <span class="p">(</span><span class="mi">1490823</span> <span class="n">hits</span><span class="p">)</span>  <span class="p">(</span><span class="n">op</span><span class="o">=</span><span class="mh">0xd53cd040</span><span class="o">/</span>  <span class="n">System</span> <span class="n">Reg</span><span class="p">)</span>
+<span class="n">Instr</span><span class="p">:</span> <span class="n">mrs</span> <span class="n">x1</span><span class="p">,</span> <span class="n">sp_el0</span>           <span class="p">(</span><span class="mi">933793</span> <span class="n">hits</span><span class="p">)</span>   <span class="p">(</span><span class="n">op</span><span class="o">=</span><span class="mh">0xd5384101</span><span class="o">/</span>  <span class="n">System</span> <span class="n">Reg</span><span class="p">)</span>
+<span class="n">Instr</span><span class="p">:</span> <span class="n">mrs</span> <span class="n">x2</span><span class="p">,</span> <span class="n">sp_el0</span>           <span class="p">(</span><span class="mi">699516</span> <span class="n">hits</span><span class="p">)</span>   <span class="p">(</span><span class="n">op</span><span class="o">=</span><span class="mh">0xd5384102</span><span class="o">/</span>  <span class="n">System</span> <span class="n">Reg</span><span class="p">)</span>
+<span class="n">Instr</span><span class="p">:</span> <span class="n">mrs</span> <span class="n">x4</span><span class="p">,</span> <span class="n">tpidr_el2</span>        <span class="p">(</span><span class="mi">528437</span> <span class="n">hits</span><span class="p">)</span>   <span class="p">(</span><span class="n">op</span><span class="o">=</span><span class="mh">0xd53cd044</span><span class="o">/</span>  <span class="n">System</span> <span class="n">Reg</span><span class="p">)</span>
+<span class="n">Instr</span><span class="p">:</span> <span class="n">mrs</span> <span class="n">x30</span><span class="p">,</span> <span class="n">ttbr1_el1</span>       <span class="p">(</span><span class="mi">480776</span> <span class="n">hits</span><span class="p">)</span>   <span class="p">(</span><span class="n">op</span><span class="o">=</span><span class="mh">0xd538203e</span><span class="o">/</span>  <span class="n">System</span> <span class="n">Reg</span><span class="p">)</span>
+<span class="n">Instr</span><span class="p">:</span> <span class="n">msr</span> <span class="n">ttbr1_el1</span><span class="p">,</span> <span class="n">x30</span>       <span class="p">(</span><span class="mi">480713</span> <span class="n">hits</span><span class="p">)</span>   <span class="p">(</span><span class="n">op</span><span class="o">=</span><span class="mh">0xd518203e</span><span class="o">/</span>  <span class="n">System</span> <span class="n">Reg</span><span class="p">)</span>
+<span class="n">Instr</span><span class="p">:</span> <span class="n">msr</span> <span class="n">vbar_el1</span><span class="p">,</span> <span class="n">x30</span>        <span class="p">(</span><span class="mi">480671</span> <span class="n">hits</span><span class="p">)</span>   <span class="p">(</span><span class="n">op</span><span class="o">=</span><span class="mh">0xd518c01e</span><span class="o">/</span>  <span class="n">System</span> <span class="n">Reg</span><span class="p">)</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p>To find the argument shorthand for the class you need to examine the
+source code of the plugin at the moment, specifically the <code class="docutils literal notranslate"><span class="pre">*opt</span></code>
+argument in the InsnClassExecCount tables.</p>
+<ul class="simple">
+<li><p>contrib/plugins/lockstep.c</p></li>
+</ul>
+<p>This is a debugging tool for developers who want to find out when and
+where execution diverges after a subtle change to TCG code generation.
+It is not an exact science and results are likely to be mixed once
+asynchronous events are introduced. While the use of -icount can
+introduce determinism to the execution flow it doesn’t always follow
+the translation sequence will be exactly the same. Typically this is
+caused by a timer firing to service the GUI causing a block to end
+early. However in some cases it has proved to be useful in pointing
+people at roughly where execution diverges. The only argument you need
+for the plugin is a path for the socket the two instances will
+communicate over:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">sparc</span><span class="o">-</span><span class="n">softmmu</span><span class="o">/</span><span class="n">qemu</span><span class="o">-</span><span class="n">system</span><span class="o">-</span><span class="n">sparc</span> <span class="o">-</span><span class="n">monitor</span> <span class="n">none</span> <span class="o">-</span><span class="n">parallel</span> <span class="n">none</span> \
+  <span class="o">-</span><span class="n">net</span> <span class="n">none</span> <span class="o">-</span><span class="n">M</span> <span class="n">SS</span><span class="o">-</span><span class="mi">20</span> <span class="o">-</span><span class="n">m</span> <span class="mi">256</span> <span class="o">-</span><span class="n">kernel</span> <span class="n">day11</span><span class="o">/</span><span class="n">zImage</span><span class="o">.</span><span class="n">elf</span> \
+  <span class="o">-</span><span class="n">plugin</span> <span class="o">./</span><span class="n">contrib</span><span class="o">/</span><span class="n">plugins</span><span class="o">/</span><span class="n">liblockstep</span><span class="o">.</span><span class="n">so</span><span class="p">,</span><span class="n">sockpath</span><span class="o">=</span><span class="n">lockstep</span><span class="o">-</span><span class="n">sparc</span><span class="o">.</span><span class="n">sock</span> \
+<span class="o">-</span><span class="n">d</span> <span class="n">plugin</span><span class="p">,</span><span class="n">nochain</span>
+</pre></div>
+</div>
+<p>which will eventually report:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">qemu</span><span class="o">-</span><span class="n">system</span><span class="o">-</span><span class="n">sparc</span><span class="p">:</span> <span class="n">warning</span><span class="p">:</span> <span class="n">nic</span> <span class="n">lance</span><span class="o">.</span><span class="mi">0</span> <span class="n">has</span> <span class="n">no</span> <span class="n">peer</span>
+<span class="o">@</span> <span class="mh">0x000000ffd06678</span> <span class="n">vs</span> <span class="mh">0x000000ffd001e0</span> <span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="mi">1</span> <span class="n">since</span> <span class="n">last</span><span class="p">)</span>
+<span class="o">@</span> <span class="mh">0x000000ffd07d9c</span> <span class="n">vs</span> <span class="mh">0x000000ffd06678</span> <span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="mi">1</span> <span class="n">since</span> <span class="n">last</span><span class="p">)</span>
+<span class="n">Δ</span> <span class="n">insn_count</span> <span class="o">@</span> <span class="mh">0x000000ffd07d9c</span> <span class="p">(</span><span class="mi">809900609</span><span class="p">)</span> <span class="n">vs</span> <span class="mh">0x000000ffd06678</span> <span class="p">(</span><span class="mi">809900612</span><span class="p">)</span>
+  <span class="n">previously</span> <span class="o">@</span> <span class="mh">0x000000ffd06678</span><span class="o">/</span><span class="mi">10</span> <span class="p">(</span><span class="mi">809900609</span> <span class="n">insns</span><span class="p">)</span>
+  <span class="n">previously</span> <span class="o">@</span> <span class="mh">0x000000ffd001e0</span><span class="o">/</span><span class="mi">4</span> <span class="p">(</span><span class="mi">809900599</span> <span class="n">insns</span><span class="p">)</span>
+  <span class="n">previously</span> <span class="o">@</span> <span class="mh">0x000000ffd080ac</span><span class="o">/</span><span class="mi">2</span> <span class="p">(</span><span class="mi">809900595</span> <span class="n">insns</span><span class="p">)</span>
+  <span class="n">previously</span> <span class="o">@</span> <span class="mh">0x000000ffd08098</span><span class="o">/</span><span class="mi">5</span> <span class="p">(</span><span class="mi">809900593</span> <span class="n">insns</span><span class="p">)</span>
+  <span class="n">previously</span> <span class="o">@</span> <span class="mh">0x000000ffd080c0</span><span class="o">/</span><span class="mi">1</span> <span class="p">(</span><span class="mi">809900588</span> <span class="n">insns</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>contrib/plugins/hwprofile.c</p></li>
+</ul>
+<p>The hwprofile tool can only be used with system emulation and allows
+the user to see what hardware is accessed how often. It has a number of options:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>track=read or track=write</p></li>
+</ul>
+<p>By default the plugin tracks both reads and writes. You can use one
+of these options to limit the tracking to just one class of accesses.</p>
+<ul class="simple">
+<li><p>source</p></li>
+</ul>
+<p>Will include a detailed break down of what the guest PC that made the
+access was. Not compatible with the pattern option. Example output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cirrus</span><span class="o">-</span><span class="n">low</span><span class="o">-</span><span class="n">memory</span> <span class="o">@</span> <span class="mh">0xfffffd00000a0000</span>
+ <span class="n">pc</span><span class="p">:</span><span class="n">fffffc0000005cdc</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">256</span>
+ <span class="n">pc</span><span class="p">:</span><span class="n">fffffc0000005ce8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">256</span>
+ <span class="n">pc</span><span class="p">:</span><span class="n">fffffc0000005cec</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">256</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>pattern</p></li>
+</ul>
+<p>Instead break down the accesses based on the offset into the HW
+region. This can be useful for seeing the most used registers of a
+device. Example output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pci0</span><span class="o">-</span><span class="n">conf</span> <span class="o">@</span> <span class="mh">0xfffffd01fe000000</span>
+  <span class="n">off</span><span class="p">:</span><span class="mi">00000004</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+  <span class="n">off</span><span class="p">:</span><span class="mi">00000010</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span>
+  <span class="n">off</span><span class="p">:</span><span class="mi">00000014</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span>
+  <span class="n">off</span><span class="p">:</span><span class="mi">00000018</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span>
+  <span class="n">off</span><span class="p">:</span><span class="mi">0000001</span><span class="n">c</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span>
+  <span class="n">off</span><span class="p">:</span><span class="mi">00000020</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span>
+  <span class="o">...</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ul class="simple">
+<li><p>contrib/plugins/execlog.c</p></li>
+</ul>
+<p>The execlog tool traces executed instructions with memory access. It can be used
+for debugging and security analysis purposes.
+Please be aware that this will generate a lot of output.</p>
+<p>The plugin takes no argument:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>qemu-system-arm $(QEMU_ARGS) \
+  -plugin ./contrib/plugins/libexeclog.so -d plugin
+</pre></div>
+</div>
+<p>which will output an execution trace following this structure:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># vCPU, vAddr, opcode, disassembly[, load/store, memory addr, device]...</span>
+<span class="mi">0</span><span class="p">,</span> <span class="mh">0xa12</span><span class="p">,</span> <span class="mh">0xf8012400</span><span class="p">,</span> <span class="s2">&quot;movs r4, #0&quot;</span>
+<span class="mi">0</span><span class="p">,</span> <span class="mh">0xa14</span><span class="p">,</span> <span class="mh">0xf87f42b4</span><span class="p">,</span> <span class="s2">&quot;cmp r4, r6&quot;</span>
+<span class="mi">0</span><span class="p">,</span> <span class="mh">0xa16</span><span class="p">,</span> <span class="mh">0xd206</span><span class="p">,</span> <span class="s2">&quot;bhs #0xa26&quot;</span>
+<span class="mi">0</span><span class="p">,</span> <span class="mh">0xa18</span><span class="p">,</span> <span class="mh">0xfff94803</span><span class="p">,</span> <span class="s2">&quot;ldr r0, [pc, #0xc]&quot;</span><span class="p">,</span> <span class="n">load</span><span class="p">,</span> <span class="mh">0x00010a28</span><span class="p">,</span> <span class="n">RAM</span>
+<span class="mi">0</span><span class="p">,</span> <span class="mh">0xa1a</span><span class="p">,</span> <span class="mh">0xf989f000</span><span class="p">,</span> <span class="s2">&quot;bl #0xd30&quot;</span>
+<span class="mi">0</span><span class="p">,</span> <span class="mh">0xd30</span><span class="p">,</span> <span class="mh">0xfff9b510</span><span class="p">,</span> <span class="s2">&quot;push {r4, lr}&quot;</span><span class="p">,</span> <span class="n">store</span><span class="p">,</span> <span class="mh">0x20003ee0</span><span class="p">,</span> <span class="n">RAM</span><span class="p">,</span> <span class="n">store</span><span class="p">,</span> <span class="mh">0x20003ee4</span><span class="p">,</span> <span class="n">RAM</span>
+<span class="mi">0</span><span class="p">,</span> <span class="mh">0xd32</span><span class="p">,</span> <span class="mh">0xf9893014</span><span class="p">,</span> <span class="s2">&quot;adds r0, #0x14&quot;</span>
+<span class="mi">0</span><span class="p">,</span> <span class="mh">0xd34</span><span class="p">,</span> <span class="mh">0xf9c8f000</span><span class="p">,</span> <span class="s2">&quot;bl #0x10c8&quot;</span>
+<span class="mi">0</span><span class="p">,</span> <span class="mh">0x10c8</span><span class="p">,</span> <span class="mh">0xfff96c43</span><span class="p">,</span> <span class="s2">&quot;ldr r3, [r0, #0x44]&quot;</span><span class="p">,</span> <span class="n">load</span><span class="p">,</span> <span class="mh">0x200000e4</span><span class="p">,</span> <span class="n">RAM</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>contrib/plugins/cache.c</p></li>
+</ul>
+<p>Cache modelling plugin that measures the performance of a given L1 cache
+configuration, and optionally a unified L2 per-core cache when a given working
+set is run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">qemu</span><span class="o">-</span><span class="n">x86_64</span> <span class="o">-</span><span class="n">plugin</span> <span class="o">./</span><span class="n">contrib</span><span class="o">/</span><span class="n">plugins</span><span class="o">/</span><span class="n">libcache</span><span class="o">.</span><span class="n">so</span> \
+  <span class="o">-</span><span class="n">d</span> <span class="n">plugin</span> <span class="o">-</span><span class="n">D</span> <span class="n">cache</span><span class="o">.</span><span class="n">log</span> <span class="o">./</span><span class="n">tests</span><span class="o">/</span><span class="n">tcg</span><span class="o">/</span><span class="n">x86_64</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">user</span><span class="o">/</span><span class="n">float_convs</span>
+</pre></div>
+</div>
+<p>will report the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>core #, data accesses, data misses, dmiss rate, insn accesses, insn misses, imiss rate
+0       996695         508             0.0510%  2642799        18617           0.7044%
+
+address, data misses, instruction
+0x424f1e (_int_malloc), 109, movq %rax, 8(%rcx)
+0x41f395 (_IO_default_xsputn), 49, movb %dl, (%rdi, %rax)
+0x42584d (ptmalloc_init.part.0), 33, movaps %xmm0, (%rax)
+0x454d48 (__tunables_init), 20, cmpb $0, (%r8)
+...
+
+address, fetch misses, instruction
+0x4160a0 (__vfprintf_internal), 744, movl $1, %ebx
+0x41f0a0 (_IO_setb), 744, endbr64
+0x415882 (__vfprintf_internal), 744, movq %r12, %rdi
+0x4268a0 (__malloc), 696, andq $0xfffffffffffffff0, %rax
+...
+</pre></div>
+</div>
+<p>The plugin has a number of arguments, all of them are optional:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>limit=N</p></li>
+</ul>
+<p>Print top N icache and dcache thrashing instructions along with their
+address, number of misses, and its disassembly. (default: 32)</p>
+<ul class="simple">
+<li><p>icachesize=N</p></li>
+<li><p>iblksize=B</p></li>
+<li><p>iassoc=A</p></li>
+</ul>
+<p>Instruction cache configuration arguments. They specify the cache size, block
+size, and associativity of the instruction cache, respectively.
+(default: N = 16384, B = 64, A = 8)</p>
+<ul class="simple">
+<li><p>dcachesize=N</p></li>
+<li><p>dblksize=B</p></li>
+<li><p>dassoc=A</p></li>
+</ul>
+<p>Data cache configuration arguments. They specify the cache size, block size,
+and associativity of the data cache, respectively.
+(default: N = 16384, B = 64, A = 8)</p>
+<ul class="simple">
+<li><p>evict=POLICY</p></li>
+</ul>
+<p>Sets the eviction policy to POLICY. Available policies are: <code class="code docutils literal notranslate"><span class="pre">lru</span></code>,
+<code class="code docutils literal notranslate"><span class="pre">fifo</span></code>, and <code class="code docutils literal notranslate"><span class="pre">rand</span></code>. The plugin will use the specified policy for
+both instruction and data caches. (default: POLICY = <code class="code docutils literal notranslate"><span class="pre">lru</span></code>)</p>
+<ul class="simple">
+<li><p>cores=N</p></li>
+</ul>
+<p>Sets the number of cores for which we maintain separate icache and dcache.
+(default: for linux-user, N = 1, for full system emulation: N = cores
+available to guest)</p>
+<ul class="simple">
+<li><p>l2=on</p></li>
+</ul>
+<p>Simulates a unified L2 cache (stores blocks for both instructions and data)
+using the default L2 configuration (cache size = 2MB, associativity = 16-way,
+block size = 64B).</p>
+<ul class="simple">
+<li><p>l2cachesize=N</p></li>
+<li><p>l2blksize=B</p></li>
+<li><p>l2assoc=A</p></li>
+</ul>
+<p>L2 cache configuration arguments. They specify the cache size, block size, and
+associativity of the L2 cache, respectively. Setting any of the L2
+configuration arguments implies <code class="docutils literal notranslate"><span class="pre">l2=on</span></code>.
+(default: N = 2097152 (2MB), B = 64, A = 16)</p>
+</div></blockquote>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="replay.html" class="btn btn-neutral float-right" title="Execution Record/Replay" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="tcg-icount.html" class="btn btn-neutral float-left" title="TCG Instruction Counting" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2022, The QEMU Project Developers.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+<!-- Empty para to force a blank line after "Built with Sphinx ..." -->
+<p></p>
+
+<p>This documentation is for QEMU version 7.1.0.</p>
+
+
+<p><a href="../about/license.html">QEMU and this manual are released under the
+GNU General Public License, version 2.</a></p>
+
+ 
+
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

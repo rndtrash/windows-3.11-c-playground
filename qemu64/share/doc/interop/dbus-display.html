@@ -1,0 +1,1031 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>D-Bus display &mdash; QEMU  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/custom.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Live Block Device Operations" href="live-block-operations.html" />
+    <link rel="prev" title="D-Bus VMState" href="dbus-vmstate.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #802400" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> QEMU
+          
+
+          
+            
+            <img src="../_static/qemu_128x128.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                7.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About QEMU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../system/index.html">System Emulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Mode Emulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/index.html">Tools</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">System Emulation Management and Interoperability</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="barrier.html">Barrier client protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bitmaps.html">Dirty Bitmaps and Incremental Backup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dbus.html">D-Bus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dbus-vmstate.html">D-Bus VMState</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">D-Bus display</a></li>
+<li class="toctree-l2"><a class="reference internal" href="live-block-operations.html">Live Block Device Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pr-helper.html">Persistent reservation helper protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qemu-ga.html">QEMU Guest Agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qemu-ga-ref.html">QEMU Guest Agent Protocol Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qemu-qmp-ref.html">QEMU QMP Reference Manual</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qemu-storage-daemon-qmp-ref.html">QEMU Storage Daemon QMP Reference Manual</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vhost-user.html">Vhost-user Protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vhost-user-gpu.html">Vhost-user-gpu Protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vhost-vdpa.html">Vhost-vdpa Protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="virtio-balloon-stats.html">Virtio balloon memory statistics</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../specs/index.html">System Emulation Guest Hardware Specifications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devel/index.html">Developer Information</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">QEMU</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">System Emulation Management and Interoperability</a> &raquo;</li>
+        
+      <li>D-Bus display</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            
+              <a href="https://gitlab.com/qemu-project/qemu/blob/master/docs/interop/dbus-display.rst" class="fa fa-gitlab"> Edit on GitLab</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="d-bus-display">
+<h1>D-Bus display<a class="headerlink" href="#d-bus-display" title="Permalink to this headline">¶</a></h1>
+<p>QEMU can export the VM display through D-Bus (when started with <code class="docutils literal notranslate"><span class="pre">-display</span>
+<span class="pre">dbus</span></code>), to allow out-of-process UIs, remote protocol servers or other
+interactive display usages.</p>
+<p>Various specialized D-Bus interfaces are available on different object paths
+under <code class="docutils literal notranslate"><span class="pre">/org/qemu/Display1/</span></code>, depending on the VM configuration.</p>
+<p>QEMU also implements the standard interfaces, such as
+<a class="reference external" href="https://dbus.freedesktop.org/doc/dbus-specification.html#standard-interfaces">org.freedesktop.DBus.Introspectable</a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Sphinx 4 is required to build D-Bus documentation.</p>
+<p>This is the content of <code class="docutils literal notranslate"><span class="pre">ui/dbus-display1.xml</span></code>:</p>
+</div>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+<span class="nt">&lt;node&gt;</span>
+  <span class="c">&lt;!--</span>
+<span class="c">      org.qemu.Display1.VM:</span>
+
+<span class="c">      This interface is implemented on ``/org/qemu/Display1/VM``.</span>
+<span class="c">  --&gt;</span>
+  <span class="nt">&lt;interface</span> <span class="na">name=</span><span class="s">&quot;org.qemu.Display1.VM&quot;</span><span class="nt">&gt;</span>
+    <span class="c">&lt;!--</span>
+<span class="c">        Name:</span>
+
+<span class="c">        The name of the VM.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;Name&quot;</span> <span class="na">type=</span><span class="s">&quot;s&quot;</span> <span class="na">access=</span><span class="s">&quot;read&quot;</span><span class="nt">/&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        UUID:</span>
+
+<span class="c">        The UUID of the VM.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;UUID&quot;</span> <span class="na">type=</span><span class="s">&quot;s&quot;</span> <span class="na">access=</span><span class="s">&quot;read&quot;</span><span class="nt">/&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        ConsoleIDs:</span>
+
+<span class="c">        The list of consoles available on ``/org/qemu/Display1/Console_$id``.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;ConsoleIDs&quot;</span> <span class="na">type=</span><span class="s">&quot;au&quot;</span> <span class="na">access=</span><span class="s">&quot;read&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/interface&gt;</span>
+
+  <span class="c">&lt;!--</span>
+<span class="c">      org.qemu.Display1.Console:</span>
+
+<span class="c">      This interface is implemented on ``/org/qemu/Display1/Console_$id``. You</span>
+<span class="c">      may discover available consoles through introspection or with the</span>
+<span class="c">      :dbus:prop:`org.qemu.Display1.VM.ConsoleIDs` property.</span>
+
+<span class="c">      A console is attached to a video device head. It may be &quot;Graphic&quot; or</span>
+<span class="c">      &quot;Text&quot; (see :dbus:prop:`Type` and other properties).</span>
+
+<span class="c">      Interactions with a console may be done with</span>
+<span class="c">      :dbus:iface:`org.qemu.Display1.Keyboard` and</span>
+<span class="c">      :dbus:iface:`org.qemu.Display1.Mouse` interfaces when available.</span>
+<span class="c">  --&gt;</span>
+  <span class="nt">&lt;interface</span> <span class="na">name=</span><span class="s">&quot;org.qemu.Display1.Console&quot;</span><span class="nt">&gt;</span>
+    <span class="c">&lt;!--</span>
+<span class="c">        RegisterListener:</span>
+<span class="c">        @listener: a Unix socket FD, for peer-to-peer D-Bus communication.</span>
+
+<span class="c">        Register a console listener, which will receive display updates, until</span>
+<span class="c">        it is disconnected.</span>
+
+<span class="c">        Multiple listeners may be registered simultaneously.</span>
+
+<span class="c">        The listener is expected to implement the</span>
+<span class="c">        :dbus:iface:`org.qemu.Display1.Listener` interface.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;RegisterListener&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;h&quot;</span> <span class="na">name=</span><span class="s">&quot;listener&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        SetUIInfo:</span>
+<span class="c">        @width_mm: the physical display width in millimeters.</span>
+<span class="c">        @height_mm: the physical display height in millimeters.</span>
+<span class="c">        @xoff: horizontal offset, in pixels.</span>
+<span class="c">        @yoff: vertical offset, in pixels.</span>
+<span class="c">        @width: console width, in pixels.</span>
+<span class="c">        @height: console height, in pixels.</span>
+
+<span class="c">        Modify the dimensions and display settings.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;SetUIInfo&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;width_mm&quot;</span> <span class="na">type=</span><span class="s">&quot;q&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;height_mm&quot;</span> <span class="na">type=</span><span class="s">&quot;q&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;xoff&quot;</span> <span class="na">type=</span><span class="s">&quot;i&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;yoff&quot;</span> <span class="na">type=</span><span class="s">&quot;i&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;width&quot;</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;height&quot;</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        Label:</span>
+
+<span class="c">        A user-friendly name for the console (for ex: &quot;VGA&quot;).</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;Label&quot;</span> <span class="na">type=</span><span class="s">&quot;s&quot;</span> <span class="na">access=</span><span class="s">&quot;read&quot;</span><span class="nt">/&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        Head:</span>
+
+<span class="c">        Graphical device head number.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;Head&quot;</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">access=</span><span class="s">&quot;read&quot;</span><span class="nt">/&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        Type:</span>
+
+<span class="c">        Console type (&quot;Graphic&quot; or &quot;Text&quot;).</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;Type&quot;</span> <span class="na">type=</span><span class="s">&quot;s&quot;</span> <span class="na">access=</span><span class="s">&quot;read&quot;</span><span class="nt">/&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        Width:</span>
+
+<span class="c">        Console width, in pixels.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;Width&quot;</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">access=</span><span class="s">&quot;read&quot;</span><span class="nt">/&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        Height:</span>
+
+<span class="c">        Console height, in pixels.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;Height&quot;</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">access=</span><span class="s">&quot;read&quot;</span><span class="nt">/&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        DeviceAddress:</span>
+
+<span class="c">        The device address (ex: &quot;pci/0000/02.0&quot;).</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;DeviceAddress&quot;</span> <span class="na">type=</span><span class="s">&quot;s&quot;</span> <span class="na">access=</span><span class="s">&quot;read&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/interface&gt;</span>
+
+  <span class="c">&lt;!--</span>
+<span class="c">      org.qemu.Display1.Keyboard:</span>
+
+<span class="c">      This interface in implemented on ``/org/qemu/Display1/Console_$id`` (see</span>
+<span class="c">      :dbus:iface:`~org.qemu.Display1.Console`).</span>
+<span class="c">  --&gt;</span>
+  <span class="nt">&lt;interface</span> <span class="na">name=</span><span class="s">&quot;org.qemu.Display1.Keyboard&quot;</span><span class="nt">&gt;</span>
+    <span class="c">&lt;!--</span>
+<span class="c">        Press:</span>
+<span class="c">        @keycode: QEMU key number (xtkbd + special re-encoding of high bit)</span>
+
+<span class="c">        Send a key press event.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;Press&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">name=</span><span class="s">&quot;keycode&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        Release:</span>
+<span class="c">        @keycode: QEMU key number (xtkbd + special re-encoding of high bit)</span>
+
+<span class="c">        Send a key release event.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;Release&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">name=</span><span class="s">&quot;keycode&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        Modifiers:</span>
+
+<span class="c">        The active keyboard modifiers::</span>
+
+<span class="c">          Scroll = 1 &lt;&lt; 0</span>
+<span class="c">          Num    = 1 &lt;&lt; 1</span>
+<span class="c">          Caps   = 1 &lt;&lt; 2</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;Modifiers&quot;</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">access=</span><span class="s">&quot;read&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/interface&gt;</span>
+
+  <span class="c">&lt;!--</span>
+<span class="c">      org.qemu.Display1.Mouse:</span>
+
+<span class="c">      This interface in implemented on ``/org/qemu/Display1/Console_$id`` (see</span>
+<span class="c">      :dbus:iface:`~org.qemu.Display1.Console` documentation).</span>
+
+<span class="c">      .. _dbus-button-values:</span>
+
+<span class="c">      **Button values**::</span>
+
+<span class="c">        Left       = 0</span>
+<span class="c">        Middle     = 1</span>
+<span class="c">        Right      = 2</span>
+<span class="c">        Wheel-up   = 3</span>
+<span class="c">        Wheel-down = 4</span>
+<span class="c">        Side       = 5</span>
+<span class="c">        Extra      = 6</span>
+<span class="c">  --&gt;</span>
+  <span class="nt">&lt;interface</span> <span class="na">name=</span><span class="s">&quot;org.qemu.Display1.Mouse&quot;</span><span class="nt">&gt;</span>
+    <span class="c">&lt;!--</span>
+<span class="c">        Press:</span>
+<span class="c">        @button: :ref:`button value&lt;dbus-button-values&gt;`.</span>
+
+<span class="c">        Send a mouse button press event.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;Press&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">name=</span><span class="s">&quot;button&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        Release:</span>
+<span class="c">        @button: :ref:`button value&lt;dbus-button-values&gt;`.</span>
+
+<span class="c">        Send a mouse button release event.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;Release&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">name=</span><span class="s">&quot;button&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        SetAbsPosition:</span>
+<span class="c">        @x: X position, in pixels.</span>
+<span class="c">        @y: Y position, in pixels.</span>
+
+<span class="c">        Set the mouse pointer position.</span>
+
+<span class="c">        Returns an error if not :dbus:prop:`IsAbsolute`.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;SetAbsPosition&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">name=</span><span class="s">&quot;x&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">name=</span><span class="s">&quot;y&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        RelMotion:</span>
+<span class="c">        @dx: X-delta, in pixels.</span>
+<span class="c">        @dy: Y-delta, in pixels.</span>
+
+<span class="c">        Move the mouse pointer position, relative to the current position.</span>
+
+<span class="c">        Returns an error if :dbus:prop:`IsAbsolute`.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;RelMotion&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;i&quot;</span> <span class="na">name=</span><span class="s">&quot;dx&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;i&quot;</span> <span class="na">name=</span><span class="s">&quot;dy&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        IsAbsolute:</span>
+
+<span class="c">        Whether the mouse is using absolute movements.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;IsAbsolute&quot;</span> <span class="na">type=</span><span class="s">&quot;b&quot;</span> <span class="na">access=</span><span class="s">&quot;read&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/interface&gt;</span>
+
+  <span class="c">&lt;!--</span>
+<span class="c">      org.qemu.Display1.Listener:</span>
+
+<span class="c">      This client-side interface must be available on</span>
+<span class="c">      ``/org/qemu/Display1/Listener`` when registering the peer-to-peer</span>
+<span class="c">      connection with :dbus:meth:`~org.qemu.Display1.Console.Register`.</span>
+<span class="c">  --&gt;</span>
+  <span class="nt">&lt;interface</span> <span class="na">name=</span><span class="s">&quot;org.qemu.Display1.Listener&quot;</span><span class="nt">&gt;</span>
+    <span class="c">&lt;!--</span>
+<span class="c">        Scanout:</span>
+<span class="c">        @width: display width, in pixels.</span>
+<span class="c">        @height: display height, in pixels.</span>
+<span class="c">        @stride: data stride, in bytes.</span>
+<span class="c">        @pixman_format: image format (ex: ``PIXMAN_X8R8G8B8``).</span>
+<span class="c">        @data: image data.</span>
+
+<span class="c">        Resize and update the display content.</span>
+
+<span class="c">        The data to transfer for the display update may be large. The preferred</span>
+<span class="c">        scanout method is :dbus:meth:`ScanoutDMABUF`, used whenever possible.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;Scanout&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">name=</span><span class="s">&quot;width&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">name=</span><span class="s">&quot;height&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">name=</span><span class="s">&quot;stride&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">name=</span><span class="s">&quot;pixman_format&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;ay&quot;</span> <span class="na">name=</span><span class="s">&quot;data&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;annotation</span> <span class="na">name=</span><span class="s">&quot;org.gtk.GDBus.C.ForceGVariant&quot;</span> <span class="na">value=</span><span class="s">&quot;true&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/arg&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        Update:</span>
+<span class="c">        @x: X update position, in pixels.</span>
+<span class="c">        @y: Y update position, in pixels.</span>
+<span class="c">        @width: update width, in pixels.</span>
+<span class="c">        @height: update height, in pixels.</span>
+<span class="c">        @stride: data stride, in bytes.</span>
+<span class="c">        @pixman_format: image format (ex: ``PIXMAN_X8R8G8B8``).</span>
+<span class="c">        @data: display image data.</span>
+
+<span class="c">        Update the display content.</span>
+
+<span class="c">        This method is only called after a :dbus:meth:`Scanout` call.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;Update&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;i&quot;</span> <span class="na">name=</span><span class="s">&quot;x&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;i&quot;</span> <span class="na">name=</span><span class="s">&quot;y&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;i&quot;</span> <span class="na">name=</span><span class="s">&quot;width&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;i&quot;</span> <span class="na">name=</span><span class="s">&quot;height&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">name=</span><span class="s">&quot;stride&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">name=</span><span class="s">&quot;pixman_format&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;ay&quot;</span> <span class="na">name=</span><span class="s">&quot;data&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;annotation</span> <span class="na">name=</span><span class="s">&quot;org.gtk.GDBus.C.ForceGVariant&quot;</span> <span class="na">value=</span><span class="s">&quot;true&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/arg&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        ScanoutDMABUF:</span>
+<span class="c">        @dmabuf: the DMABUF file descriptor.</span>
+<span class="c">        @width: display width, in pixels.</span>
+<span class="c">        @height: display height, in pixels.</span>
+<span class="c">        @stride: stride, in bytes.</span>
+<span class="c">        @fourcc: DMABUF fourcc.</span>
+<span class="c">        @modifier: DMABUF modifier.</span>
+<span class="c">        @y0_top: whether Y position 0 is the top or not.</span>
+
+<span class="c">        Resize and update the display content with a DMABUF.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;ScanoutDMABUF&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;h&quot;</span> <span class="na">name=</span><span class="s">&quot;dmabuf&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">name=</span><span class="s">&quot;width&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">name=</span><span class="s">&quot;height&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">name=</span><span class="s">&quot;stride&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">name=</span><span class="s">&quot;fourcc&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="c">&lt;!-- xywh? --&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;t&quot;</span> <span class="na">name=</span><span class="s">&quot;modifier&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;b&quot;</span> <span class="na">name=</span><span class="s">&quot;y0_top&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        UpdateDMABUF:</span>
+<span class="c">        @x: the X update position, in pixels.</span>
+<span class="c">        @y: the Y update position, in pixels.</span>
+<span class="c">        @width: the update width, in pixels.</span>
+<span class="c">        @height: the update height, in pixels.</span>
+
+<span class="c">        Update the display content with the current DMABUF and the given region.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;UpdateDMABUF&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;i&quot;</span> <span class="na">name=</span><span class="s">&quot;x&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;i&quot;</span> <span class="na">name=</span><span class="s">&quot;y&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;i&quot;</span> <span class="na">name=</span><span class="s">&quot;width&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;i&quot;</span> <span class="na">name=</span><span class="s">&quot;height&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        Disable:</span>
+
+<span class="c">        Disable the display (turn it off).</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;Disable&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        MouseSet:</span>
+<span class="c">        @x: X mouse position, in pixels.</span>
+<span class="c">        @y: Y mouse position, in pixels.</span>
+<span class="c">        @on: whether the mouse is visible or not.</span>
+
+<span class="c">        Set the mouse position and visibility.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;MouseSet&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;i&quot;</span> <span class="na">name=</span><span class="s">&quot;x&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;i&quot;</span> <span class="na">name=</span><span class="s">&quot;y&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;i&quot;</span> <span class="na">name=</span><span class="s">&quot;on&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        CursorDefine:</span>
+<span class="c">        @width: cursor width, in pixels.</span>
+<span class="c">        @height: cursor height, in pixels.</span>
+<span class="c">        @hot_x: hot-spot X position, in pixels.</span>
+<span class="c">        @hot_y: hot-spot Y position, in pixels.</span>
+<span class="c">        @data: the cursor data.</span>
+
+<span class="c">        Set the mouse cursor shape and hot-spot. The &quot;data&quot; must be ARGB, 32-bit</span>
+<span class="c">        per pixel.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;CursorDefine&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;i&quot;</span> <span class="na">name=</span><span class="s">&quot;width&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;i&quot;</span> <span class="na">name=</span><span class="s">&quot;height&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;i&quot;</span> <span class="na">name=</span><span class="s">&quot;hot_x&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;i&quot;</span> <span class="na">name=</span><span class="s">&quot;hot_y&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;ay&quot;</span> <span class="na">name=</span><span class="s">&quot;data&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;annotation</span> <span class="na">name=</span><span class="s">&quot;org.gtk.GDBus.C.ForceGVariant&quot;</span> <span class="na">value=</span><span class="s">&quot;true&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/arg&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+  <span class="nt">&lt;/interface&gt;</span>
+
+  <span class="c">&lt;!--</span>
+<span class="c">      org.qemu.Display1.Clipboard:</span>
+
+<span class="c">      This interface must be implemented by both the client and the server on</span>
+<span class="c">      ``/org/qemu/Display1/Clipboard`` to support clipboard sharing between</span>
+<span class="c">      the client and the guest.</span>
+
+<span class="c">      Once :dbus:meth:`Register`&#39;ed, method calls may be sent and received in both</span>
+<span class="c">      directions. Unregistered callers will get error replies.</span>
+
+<span class="c">      .. _dbus-clipboard-selection:</span>
+
+<span class="c">      **Selection values**::</span>
+
+<span class="c">        Clipboard   = 0</span>
+<span class="c">        Primary     = 1</span>
+<span class="c">        Secondary   = 2</span>
+
+<span class="c">      .. _dbus-clipboard-serial:</span>
+
+<span class="c">      **Serial counter**</span>
+
+<span class="c">      To solve potential clipboard races, clipboard grabs have an associated</span>
+<span class="c">      serial counter. It is set to 0 on registration, and incremented by 1 for</span>
+<span class="c">      each grab. The peer with the highest serial is the clipboard grab owner.</span>
+
+<span class="c">      When a grab with a lower serial is received, it should be discarded.</span>
+
+<span class="c">      When a grab is attempted with the same serial number as the current grab,</span>
+<span class="c">      the one coming from the client should have higher priority, and the client</span>
+<span class="c">      should gain clipboard grab ownership.</span>
+<span class="c">  --&gt;</span>
+  <span class="nt">&lt;interface</span> <span class="na">name=</span><span class="s">&quot;org.qemu.Display1.Clipboard&quot;</span><span class="nt">&gt;</span>
+    <span class="c">&lt;!--</span>
+<span class="c">        Register:</span>
+
+<span class="c">        Register a clipboard session and reinitialize the serial counter.</span>
+
+<span class="c">        The client must register itself, and is granted an exclusive</span>
+<span class="c">        access for handling the clipboard.</span>
+
+<span class="c">        The server can reinitialize the session as well (to reset the counter).</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;Register&quot;</span><span class="nt">/&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        Unregister:</span>
+
+<span class="c">        Unregister the clipboard session.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;Unregister&quot;</span><span class="nt">/&gt;</span>
+    <span class="c">&lt;!--</span>
+<span class="c">        Grab:</span>
+<span class="c">        @selection: a :ref:`selection value&lt;dbus-clipboard-selection&gt;`.</span>
+<span class="c">        @serial: the current grab :ref:`serial&lt;dbus-clipboard-serial&gt;`.</span>
+<span class="c">        @mimes: the list of available content MIME types.</span>
+
+<span class="c">        Grab the clipboard, claiming current clipboard content.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;Grab&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">name=</span><span class="s">&quot;selection&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">name=</span><span class="s">&quot;serial&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;as&quot;</span> <span class="na">name=</span><span class="s">&quot;mimes&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        Release:</span>
+<span class="c">        @selection: a :ref:`selection value&lt;dbus-clipboard-selection&gt;`.</span>
+
+<span class="c">        Release the clipboard (does nothing if not the current owner).</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;Release&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">name=</span><span class="s">&quot;selection&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        Request:</span>
+<span class="c">        @selection: a :ref:`selection value&lt;dbus-clipboard-selection&gt;`</span>
+<span class="c">        @mimes: requested MIME types (by order of preference).</span>
+<span class="c">        @reply_mime: the returned data MIME type.</span>
+<span class="c">        @data: the clipboard data.</span>
+
+<span class="c">        Request the clipboard content.</span>
+
+<span class="c">        Return an error if the clipboard is empty, or the requested MIME types</span>
+<span class="c">        are unavailable.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;Request&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">name=</span><span class="s">&quot;selection&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;as&quot;</span> <span class="na">name=</span><span class="s">&quot;mimes&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;s&quot;</span> <span class="na">name=</span><span class="s">&quot;reply_mime&quot;</span> <span class="na">direction=</span><span class="s">&quot;out&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;ay&quot;</span> <span class="na">name=</span><span class="s">&quot;data&quot;</span> <span class="na">direction=</span><span class="s">&quot;out&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;annotation</span> <span class="na">name=</span><span class="s">&quot;org.gtk.GDBus.C.ForceGVariant&quot;</span> <span class="na">value=</span><span class="s">&quot;true&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/arg&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+  <span class="nt">&lt;/interface&gt;</span>
+
+  <span class="c">&lt;!--</span>
+<span class="c">      org.qemu.Display1.Audio:</span>
+
+<span class="c">      Audio backend may be available on ``/org/qemu/Display1/Audio``.</span>
+<span class="c">  --&gt;</span>
+  <span class="nt">&lt;interface</span> <span class="na">name=</span><span class="s">&quot;org.qemu.Display1.Audio&quot;</span><span class="nt">&gt;</span>
+    <span class="c">&lt;!--</span>
+<span class="c">        RegisterOutListener:</span>
+<span class="c">        @listener: a Unix socket FD, for peer-to-peer D-Bus communication.</span>
+
+<span class="c">        Register an audio backend playback handler.</span>
+
+<span class="c">        Multiple listeners may be registered simultaneously.</span>
+
+<span class="c">        The listener is expected to implement the</span>
+<span class="c">        :dbus:iface:`org.qemu.Display1.AudioOutListener` interface.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;RegisterOutListener&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;h&quot;</span> <span class="na">name=</span><span class="s">&quot;listener&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        RegisterInListener:</span>
+<span class="c">        @listener: a Unix socket FD, for peer-to-peer D-Bus communication.</span>
+
+<span class="c">        Register an audio backend record handler.</span>
+
+<span class="c">        Multiple listeners may be registered simultaneously.</span>
+
+<span class="c">        The listener is expected to implement the</span>
+<span class="c">        :dbus:iface:`org.qemu.Display1.AudioInListener` interface.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;RegisterInListener&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;h&quot;</span> <span class="na">name=</span><span class="s">&quot;listener&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+  <span class="nt">&lt;/interface&gt;</span>
+
+  <span class="c">&lt;!--</span>
+<span class="c">      org.qemu.Display1.AudioOutListener:</span>
+
+<span class="c">      This client-side interface must be available on</span>
+<span class="c">      ``/org/qemu/Display1/AudioOutListener`` when registering the peer-to-peer</span>
+<span class="c">      connection with :dbus:meth:`~org.qemu.Display1.Audio.RegisterOutListener`.</span>
+<span class="c">  --&gt;</span>
+  <span class="nt">&lt;interface</span> <span class="na">name=</span><span class="s">&quot;org.qemu.Display1.AudioOutListener&quot;</span><span class="nt">&gt;</span>
+    <span class="c">&lt;!--</span>
+<span class="c">        Init:</span>
+<span class="c">        @id: the stream ID.</span>
+<span class="c">        @bits: PCM bits per sample.</span>
+<span class="c">        @is_signed: whether the PCM data is signed.</span>
+<span class="c">        @is_float: PCM floating point format.</span>
+<span class="c">        @freq: the PCM frequency in Hz.</span>
+<span class="c">        @nchannels: the number of channels.</span>
+<span class="c">        @bytes_per_frame: the bytes per frame.</span>
+<span class="c">        @bytes_per_second: the bytes per second.</span>
+<span class="c">        @be: whether using big-endian format.</span>
+
+<span class="c">        Initializes a PCM playback stream.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;Init&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;id&quot;</span> <span class="na">type=</span><span class="s">&quot;t&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;bits&quot;</span> <span class="na">type=</span><span class="s">&quot;y&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;is_signed&quot;</span> <span class="na">type=</span><span class="s">&quot;b&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;is_float&quot;</span> <span class="na">type=</span><span class="s">&quot;b&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;freq&quot;</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;nchannels&quot;</span> <span class="na">type=</span><span class="s">&quot;y&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;bytes_per_frame&quot;</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;bytes_per_second&quot;</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;be&quot;</span> <span class="na">type=</span><span class="s">&quot;b&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        Fini:</span>
+<span class="c">        @id: the stream ID.</span>
+
+<span class="c">        Finish &amp; close a playback stream.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;Fini&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;id&quot;</span> <span class="na">type=</span><span class="s">&quot;t&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        SetEnabled:</span>
+<span class="c">        @id: the stream ID.</span>
+
+<span class="c">        Resume or suspend the playback stream.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;SetEnabled&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;id&quot;</span> <span class="na">type=</span><span class="s">&quot;t&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;enabled&quot;</span> <span class="na">type=</span><span class="s">&quot;b&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        SetVolume:</span>
+<span class="c">        @id: the stream ID.</span>
+<span class="c">        @mute: whether the stream is muted.</span>
+<span class="c">        @volume: the volume per-channel.</span>
+
+<span class="c">        Set the stream volume and mute state (volume without unit, 0-255).</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;SetVolume&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;id&quot;</span> <span class="na">type=</span><span class="s">&quot;t&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;mute&quot;</span> <span class="na">type=</span><span class="s">&quot;b&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;volume&quot;</span> <span class="na">type=</span><span class="s">&quot;ay&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;annotation</span> <span class="na">name=</span><span class="s">&quot;org.gtk.GDBus.C.ForceGVariant&quot;</span> <span class="na">value=</span><span class="s">&quot;true&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/arg&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        Write:</span>
+<span class="c">        @id: the stream ID.</span>
+<span class="c">        @data: the PCM data.</span>
+
+<span class="c">        PCM stream to play.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;Write&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;id&quot;</span> <span class="na">type=</span><span class="s">&quot;t&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;ay&quot;</span> <span class="na">name=</span><span class="s">&quot;data&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;annotation</span> <span class="na">name=</span><span class="s">&quot;org.gtk.GDBus.C.ForceGVariant&quot;</span> <span class="na">value=</span><span class="s">&quot;true&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/arg&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+  <span class="nt">&lt;/interface&gt;</span>
+
+  <span class="c">&lt;!--</span>
+<span class="c">      org.qemu.Display1.AudioInListener:</span>
+
+<span class="c">      This client-side interface must be available on</span>
+<span class="c">      ``/org/qemu/Display1/AudioInListener`` when registering the peer-to-peer</span>
+<span class="c">      connection with :dbus:meth:`~org.qemu.Display1.Audio.RegisterInListener`.</span>
+<span class="c">  --&gt;</span>
+  <span class="nt">&lt;interface</span> <span class="na">name=</span><span class="s">&quot;org.qemu.Display1.AudioInListener&quot;</span><span class="nt">&gt;</span>
+    <span class="c">&lt;!--</span>
+<span class="c">        Init:</span>
+<span class="c">        @id: the stream ID.</span>
+<span class="c">        @bits: PCM bits per sample.</span>
+<span class="c">        @is_signed: whether the PCM data is signed.</span>
+<span class="c">        @is_float: PCM floating point format.</span>
+<span class="c">        @freq: the PCM frequency in Hz.</span>
+<span class="c">        @nchannels: the number of channels.</span>
+<span class="c">        @bytes_per_frame: the bytes per frame.</span>
+<span class="c">        @bytes_per_second: the bytes per second.</span>
+<span class="c">        @be: whether using big-endian format.</span>
+
+<span class="c">        Initializes a PCM record stream.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;Init&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;id&quot;</span> <span class="na">type=</span><span class="s">&quot;t&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;bits&quot;</span> <span class="na">type=</span><span class="s">&quot;y&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;is_signed&quot;</span> <span class="na">type=</span><span class="s">&quot;b&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;is_float&quot;</span> <span class="na">type=</span><span class="s">&quot;b&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;freq&quot;</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;nchannels&quot;</span> <span class="na">type=</span><span class="s">&quot;y&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;bytes_per_frame&quot;</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;bytes_per_second&quot;</span> <span class="na">type=</span><span class="s">&quot;u&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;be&quot;</span> <span class="na">type=</span><span class="s">&quot;b&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        Fini:</span>
+<span class="c">        @id: the stream ID.</span>
+
+<span class="c">        Finish &amp; close a record stream.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;Fini&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;id&quot;</span> <span class="na">type=</span><span class="s">&quot;t&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        SetEnabled:</span>
+<span class="c">        @id: the stream ID.</span>
+
+<span class="c">        Resume or suspend the record stream.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;SetEnabled&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;id&quot;</span> <span class="na">type=</span><span class="s">&quot;t&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;enabled&quot;</span> <span class="na">type=</span><span class="s">&quot;b&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        SetVolume:</span>
+<span class="c">        @id: the stream ID.</span>
+<span class="c">        @mute: whether the stream is muted.</span>
+<span class="c">        @volume: the volume per-channel.</span>
+
+<span class="c">        Set the stream volume and mute state (volume without unit, 0-255).</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;SetVolume&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;id&quot;</span> <span class="na">type=</span><span class="s">&quot;t&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;mute&quot;</span> <span class="na">type=</span><span class="s">&quot;b&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;volume&quot;</span> <span class="na">type=</span><span class="s">&quot;ay&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;annotation</span> <span class="na">name=</span><span class="s">&quot;org.gtk.GDBus.C.ForceGVariant&quot;</span> <span class="na">value=</span><span class="s">&quot;true&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/arg&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        Read:</span>
+<span class="c">        @id: the stream ID.</span>
+<span class="c">        @size: the amount to read, in bytes.</span>
+<span class="c">        @data: the recorded data (which may be less than requested).</span>
+
+<span class="c">        Read &quot;size&quot; bytes from the record stream.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;Read&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;id&quot;</span> <span class="na">type=</span><span class="s">&quot;t&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">name=</span><span class="s">&quot;size&quot;</span> <span class="na">type=</span><span class="s">&quot;t&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;ay&quot;</span> <span class="na">name=</span><span class="s">&quot;data&quot;</span> <span class="na">direction=</span><span class="s">&quot;out&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;annotation</span> <span class="na">name=</span><span class="s">&quot;org.gtk.GDBus.C.ForceGVariant&quot;</span> <span class="na">value=</span><span class="s">&quot;true&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/arg&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+  <span class="nt">&lt;/interface&gt;</span>
+
+  <span class="c">&lt;!--</span>
+<span class="c">      org.qemu.Display1.Chardev:</span>
+
+<span class="c">      Character devices may be available on ``/org/qemu/Display1/Chardev_$id``.</span>
+
+<span class="c">      They may be used for different kind of streams, which are identified via</span>
+<span class="c">      their FQDN :dbus:prop:`Name`.</span>
+
+<span class="c">      .. _dbus-chardev-fqdn:</span>
+
+<span class="c">      Here are some known reserved kind names (the ``org.qemu`` prefix is</span>
+<span class="c">      reserved by QEMU):</span>
+
+<span class="c">      org.qemu.console.serial.0</span>
+<span class="c">        A serial console stream.</span>
+
+<span class="c">      org.qemu.monitor.hmp.0</span>
+<span class="c">        A QEMU HMP human monitor.</span>
+
+<span class="c">      org.qemu.monitor.qmp.0</span>
+<span class="c">        A QEMU QMP monitor.</span>
+
+<span class="c">      org.qemu.usbredir</span>
+<span class="c">        A usbredir stream.</span>
+<span class="c">  --&gt;</span>
+  <span class="nt">&lt;interface</span> <span class="na">name=</span><span class="s">&quot;org.qemu.Display1.Chardev&quot;</span><span class="nt">&gt;</span>
+    <span class="c">&lt;!--</span>
+<span class="c">        Register:</span>
+<span class="c">        @stream: a Unix FD to redirect the stream to.</span>
+
+<span class="c">        Register a file-descriptor for the stream handling.</span>
+
+<span class="c">        The current handler, if any, will be replaced.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;Register&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;arg</span> <span class="na">type=</span><span class="s">&quot;h&quot;</span> <span class="na">name=</span><span class="s">&quot;stream&quot;</span> <span class="na">direction=</span><span class="s">&quot;in&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/method&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        SendBreak:</span>
+
+<span class="c">        Send a break event to the character device.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;method</span> <span class="na">name=</span><span class="s">&quot;SendBreak&quot;</span><span class="nt">/&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        Name:</span>
+
+<span class="c">        The FQDN name to identify the kind of stream. See :ref:`reserved</span>
+<span class="c">        names&lt;dbus-chardev-fqdn&gt;`.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;Name&quot;</span> <span class="na">type=</span><span class="s">&quot;s&quot;</span> <span class="na">access=</span><span class="s">&quot;read&quot;</span><span class="nt">/&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        FEOpened:</span>
+
+<span class="c">        Whether the front-end side is opened.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;FEOpened&quot;</span> <span class="na">type=</span><span class="s">&quot;b&quot;</span> <span class="na">access=</span><span class="s">&quot;read&quot;</span><span class="nt">/&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        Echo:</span>
+
+<span class="c">        Whether the input should be echo&#39;ed (for serial streams).</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;Echo&quot;</span> <span class="na">type=</span><span class="s">&quot;b&quot;</span> <span class="na">access=</span><span class="s">&quot;read&quot;</span><span class="nt">/&gt;</span>
+
+    <span class="c">&lt;!--</span>
+<span class="c">        Owner:</span>
+
+<span class="c">        The D-Bus unique name of the registered handler.</span>
+<span class="c">    --&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;Owner&quot;</span> <span class="na">type=</span><span class="s">&quot;s&quot;</span> <span class="na">access=</span><span class="s">&quot;read&quot;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;/interface&gt;</span>
+<span class="nt">&lt;/node&gt;</span>
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="live-block-operations.html" class="btn btn-neutral float-right" title="Live Block Device Operations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="dbus-vmstate.html" class="btn btn-neutral float-left" title="D-Bus VMState" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2022, The QEMU Project Developers.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+<!-- Empty para to force a blank line after "Built with Sphinx ..." -->
+<p></p>
+
+<p>This documentation is for QEMU version 7.1.0.</p>
+
+
+<p><a href="../about/license.html">QEMU and this manual are released under the
+GNU General Public License, version 2.</a></p>
+
+ 
+
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

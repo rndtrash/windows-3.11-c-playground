@@ -1,0 +1,4 @@
+projects/**/*.exe
+projects/**/*.o
+dosbox/modimage.conf
+windows/win311.img
