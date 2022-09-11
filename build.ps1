@@ -4,10 +4,23 @@
 # (c) Ivan Kuzmenko, 2022
 
 param(
-	[string]$project = $(Read-Host "Введи название проекта из папки `"projects`" (например, example)")
+	[string]$project = $(Read-Host "Project name (e.g. example)"),
+	[string]$language = (Get-Culture).Name
 )
 
 $ErrorActionPreference = "Stop" # остановить скрипт при первой же ошибке
+
+try
+{
+	$l18n_path = $(Resolve-Path "./l18n/$language.ps1")
+}
+catch
+{
+	Write-Host "Warning: unable to find a language file for `"$language`", falling back to English..."
+	$language = 'en-US'
+	$l18n_path = $(Resolve-Path "./l18n/$language.ps1")
+}
+. $l18n_path
 
 # Настраиваем переменные для компилятора Open Watcom
 $watcom_root = $(Resolve-Path "./watcom")
@@ -23,7 +36,7 @@ elseif ($IsWindows)
 }
 else
 {
-	throw "Лол это чё такое"
+	throw $s_unknown_os
 }
 
 if ([Environment]::Is64BitOperatingSystem)
@@ -36,7 +49,7 @@ $ENV:INCLUDE = "$watcom_root/h;$watcom_root/h/win"
 
 #
 
-Write-Host "Собираем `"$project`"..."
+Write-Host ($s_building_project -f $project)
 $path = $(Resolve-Path "projects/$project")
 $ENV:INCLUDE += ";$path"
 
@@ -82,7 +95,7 @@ Invoke-Expression "$watcom_bin/wlink FORMat WIndows LIBPath `"$watcom_root/lib38
 
 Pop-Location # возвращаем всё на место
 
-Write-Host "Файл $project.exe собран!"
+Write-Host ($s_built_successfully -f $project)
 
 #
 
@@ -94,7 +107,7 @@ if ($IsWindows)
 	$dosbox = "$dosbox_root/DOSBox.exe"
 }
 
-Write-Host "Собираем образ Windows для запуска..."
+Write-Host $s_making_windows_image
 
 $temp_path = $(Resolve-Path ./temp)
 Set-Content -NoNewline -Path "$temp_path/runapp.bat" -Value "win $project" # -NoNewline потому что под Linux другое окончание строки, не перевариваемое DOS
@@ -105,7 +118,7 @@ $win_image = "$(Resolve-Path ./windows)/win311"
 [System.IO.File]::Copy("$path/$project.exe", "$temp_path/$project.exe", $true)
 (Get-Content "$dosbox_root/modimage.conf").replace('!WINDOWS_IMAGE', "${win_image}.img").replace("!TEMP", "$temp_path").replace("!PROJECT", "$project") | Set-Content "$dosbox_root/modimage.conf"
 
-[System.IO.File]::Copy("${win_image}-og.img", "${win_image}.img", $true)
+[System.IO.File]::Copy("${win_image}${win_suffix}-og.img", "${win_image}.img", $true)
 
 Invoke-Expression "$dosbox -conf $(Resolve-Path ./dosbox)/modimage.conf"
 
@@ -123,6 +136,6 @@ if ($IsWindows)
 	$qemu += "/qemu-system-i386.exe"
 }
 
-Write-Host "Поехали!"
+Write-Host $s_lets_go
 
 Invoke-Expression "$qemu -hda ${win_image}.img -boot ca -cpu pentium -m 16 -vga vmware -net nic,model=pcnet -net user"
