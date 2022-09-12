@@ -22,6 +22,21 @@ catch
 }
 . $l10n_path
 
+#
+
+function FailOnNonZeroExit
+{
+	param(
+		$command
+	)
+	Invoke-Expression $command
+
+	if (!$LASTEXITCODE -eq 0)
+	{
+		throw ($s_command_failed -f $command, $LASTEXITCODE)
+	}
+}
+
 # Настраиваем переменные для компилятора Open Watcom
 $watcom_root = $(Resolve-Path "./watcom")
 $watcom_bin = "$watcom_root/bin"
@@ -46,12 +61,15 @@ if ([Environment]::Is64BitOperatingSystem)
 
 $ENV:PATH = "$watcom_bin;" + $ENV:PATH
 $ENV:INCLUDE = "$watcom_root/h;$watcom_root/h/win"
+$ENV:WATCOM = $watcom_root
 
 #
 
 Write-Host ($s_building_project -f $project)
 $path = $(Resolve-Path "projects/$project")
 $ENV:INCLUDE += ";$path"
+
+# Building C/C++ files
 
 $cfiles = $(Get-ChildItem -Path $path -Recurse -Filter "*.c")
 if ($cfiles -eq $null) # если у нас нет файлов
@@ -81,17 +99,27 @@ foreach ($cfile in $cfiles)
 {
 	$ofile = [System.IO.Path]::ChangeExtension($cfile, ".o")
 	$ofiles += $ofile
-	Invoke-Expression "$watcom_bin/wcc -bt=windows $cfile"
+	FailOnNonZeroExit("$watcom_bin/wcc -bt=windows $cfile")
 }
 
 foreach ($cppfile in $cppfiles)
 {
 	$ofile = [System.IO.Path]::ChangeExtension($cfile, ".o")
 	$ofiles += $ofile
-	Invoke-Expression "$watcom_bin/wpp -bt=windows $cppfile"
+	FailOnNonZeroExit("$watcom_bin/wpp -bt=windows $cppfile")
 }
 
-Invoke-Expression "$watcom_bin/wlink FORMat WIndows LIBPath `"$watcom_root/lib386;$watcom_root/lib386;$watcom_root/lib286/win;$watcom_root/lib286`" Library windows FILE $ofiles Name $path/$project.exe"
+# Linking
+
+FailOnNonZeroExit("$watcom_bin/wlink FORMat WIndows LIBPath `"$watcom_root/lib386;$watcom_root/lib386;$watcom_root/lib286/win;$watcom_root/lib286`" Library windows FILE $($ofiles -join ",") Name $path/$project.exe")
+
+# Building resources
+
+$rcfile = "$project.rc"
+if (Test-Path $rcfile)
+{
+	FailOnNonZeroExit("$watcom_bin/wrc -bt=windows -`"fe=$project.exe`" $rcfile")
+}
 
 Pop-Location # возвращаем всё на место
 
@@ -120,7 +148,7 @@ $win_image = "$(Resolve-Path ./windows)/win311"
 
 [System.IO.File]::Copy("${win_image}${win_suffix}-og.img", "${win_image}.img", $true)
 
-Invoke-Expression "$dosbox -conf $(Resolve-Path ./dosbox)/modimage.conf"
+FailOnNonZeroExit("$dosbox -conf $(Resolve-Path ./dosbox)/modimage.conf")
 
 # Настраиваем QEMU
 
@@ -138,4 +166,4 @@ if ($IsWindows)
 
 Write-Host $s_lets_go
 
-Invoke-Expression "$qemu -hda ${win_image}.img -boot ca -cpu pentium -m 16 -vga vmware -net nic,model=pcnet -net user"
+FailOnNonZeroExit("$qemu -hda ${win_image}.img -boot ca -cpu pentium -m 32 -vga vmware -net nic,model=pcnet -net user")
