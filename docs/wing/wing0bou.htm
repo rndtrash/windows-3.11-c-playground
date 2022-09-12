@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>&lt;Copy SYSPAL_NOSTATIC Code to Clipboard&gt;</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<P><A NAME="45ojon"></A>#define NumSysColors (sizeof(SysPalIndex)/sizeof(SysPalIndex[1]))</P>
+
+<P>#define rgbBlack RGB(0,0,0)</P>
+
+<P>#define rgbWhite RGB(255,255,255)</P>
+
+<P>//*** These are the GetSysColor display element identifiers</P>
+
+<P>static int SysPalIndex[] = {</P>
+
+<P>COLOR_ACTIVEBORDER,</P>
+
+<P>COLOR_ACTIVECAPTION,</P>
+
+<P>COLOR_APPWORKSPACE,</P>
+
+<P>COLOR_BACKGROUND,</P>
+
+<P>COLOR_BTNFACE,</P>
+
+<P>COLOR_BTNSHADOW,</P>
+
+<P>COLOR_BTNTEXT,</P>
+
+<P>COLOR_CAPTIONTEXT,</P>
+
+<P>COLOR_GRAYTEXT,</P>
+
+<P>COLOR_HIGHLIGHT,</P>
+
+<P>COLOR_HIGHLIGHTTEXT,</P>
+
+<P>COLOR_INACTIVEBORDER,</P>
+
+<P>COLOR_INACTIVECAPTION,</P>
+
+<P>COLOR_MENU,</P>
+
+<P>COLOR_MENUTEXT,</P>
+
+<P>COLOR_SCROLLBAR,</P>
+
+<P>COLOR_WINDOW,</P>
+
+<P>COLOR_WINDOWFRAME,</P>
+
+<P>COLOR_WINDOWTEXT</P>
+
+<P>};</P>
+
+<P>//*** This array translates the display elements to black and white</P>
+
+<P>static COLORREF MonoColors[] = {</P>
+
+<P>rgbBlack,</P>
+
+<P>rgbWhite,</P>
+
+<P>rgbWhite,</P>
+
+<P>rgbWhite,</P>
+
+<P>rgbWhite,</P>
+
+<P>rgbBlack,</P>
+
+<P>rgbBlack,</P>
+
+<P>rgbBlack,</P>
+
+<P>rgbBlack,</P>
+
+<P>rgbBlack,</P>
+
+<P>rgbWhite,</P>
+
+<P>rgbWhite,</P>
+
+<P>rgbWhite,</P>
+
+<P>rgbWhite,</P>
+
+<P>rgbBlack,</P>
+
+<P>rgbWhite,</P>
+
+<P>rgbWhite,</P>
+
+<P>rgbBlack,</P>
+
+<P>rgbBlack</P>
+
+<P>};</P>
+
+<P>//*** This array holds the old color mapping so we can restore them</P>
+
+<P>static COLORREF OldColors[NumSysColors];</P>
+
+<P>//*** AppActivate sets the system palette use and</P>
+
+<P>//*** remaps the system colors accordingly.</P>
+
+<P>void AppActivate(BOOL fActive)</P>
+
+<P>{</P>
+
+<P>HDC hdc;</P>
+
+<P>int i;</P>
+
+<P>//*** Just use the screen DC</P>
+
+<P>hdc = GetDC(NULL);</P>
+
+<P>//*** If the app is activating, save the current color mapping</P>
+
+<P>//*** and switch to SYSPAL_NOSTATIC</P>
+
+<P>if (fActive &amp;&amp; GetSystemPaletteUse(hdc) == SYSPAL_STATIC)</P>
+
+<P>{</P>
+
+<P>//*** Store the current mapping</P>
+
+<P>for (i=0; i&lt;NumSysColors; i++)</P>
+
+<P>OldColors[i] = GetSysColor(SysPalIndex[i]);</P>
+
+<P>//*** Switch to SYSPAL_NOSTATIC and remap the colors</P>
+
+<P>SetSystemPaletteUse(hdc, SYSPAL_NOSTATIC);</P>
+
+<P>SetSysColors(NumSysColors, SysPalIndex, MonoColors);</P>
+
+<P>}</P>
+
+<P>else if (!fActive)</P>
+
+<P>{</P>
+
+<P>//*** Switch back to SYSPAL_STATIC and the old mapping</P>
+
+<P>SetSystemPaletteUse(hdc, SYSPAL_STATIC);</P>
+
+<P>SetSysColors(NumSysColors, SysPalIndex, OldColors);</P>
+
+<P>}</P>
+
+<P>//*** Be sure to release the DC!</P>
+
+<P>ReleaseDC(NULL,hdc);</P>
+
+<P>}</P>
+
+</BODY>
+</HTML>

@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>WinGGetDIBPointer</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="WinGGetDIBPointer">
+</OBJECT>
+
+<P><A NAME="1k.lgho"></A>WinGGetDIBPointer</P>
+
+<P>Retrieves information about a WinGBitmap and returns a pointer to its surface.</P>
+
+<P><B>void far *WinGGetDIBPointer(HBITMAP</B> <I>hWinGBitmap</I>, <A HREF="wing8g8p.htm"><B>BITMAPINFO</B></A><B> far *</B><I>pHeader</I><B>)</B></P>
+
+<P><B>Parameters</B></P>
+
+<TABLE cols=2 width=548>
+
+<TR VALIGN="top">
+<TD width=17%><I>hWinGBitmap</I></TD>
+<TD width=83%>Identifies the WinGBitmap whose surface should be retrieved.</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=17%><I>pHeader</I></TD>
+<TD width=83%>If not 0, points to a buffer to receive the attributes of the WinGDC.</TD>
+</TR>
+</TABLE><BR>
+
+<P><B>Return Value</B></P>
+
+<P>Returns a pointer to the bits of a WinGBitmap drawing surface if possible. Otherwise, <B>WinGGetDIBPointer</B> returns 0.</P>
+
+<P><B>Comments</B></P>
+
+<P>If it is supplied, the memory block indicated by <I>pHeader</I> must be large enough to hold a <A HREF="wing8g8p.htm">BITMAPINFOHEADER</A>, which will be filled in by <B>WinGGetDIBPointer</B> with the attributes of the WinGDC. For DIB surfaces using <A HREF="wing81mh.htm">BI_BITFIELDS</A> compression, <I>pHeader</I> must contain space for an additional 3 DWORDs, in which the color masks for the DIB will be returned. See the Win32 API documentation for a discussion of <A HREF="wing81mh.htm">BI_BITFIELDS</A> DIBs.</P>
+
+<P>If <I>hWinGBitmap</I> is not a WinGBitmap handle, this function will return 0 and <I>*pHeader</I> will remain unchanged.</P>
+
+<P><B>Maximizing Performance</B></P>
+
+<P><A HREF="wing683a.htm">WinGCreateBitmap</A> uses or returns the information returned by <B>WinGGetDIBPointer</B> as part of the creation process. If possible, applications should store the data when the WinGBitmap is created rather than calling <B>WinGGetDIBPointer</B> every time the information is required.</P>
+
+<P>The address of a WinGBitmap surface will remain the same for the life of the WinGBitmap.</P>
+
+<P>In 16 bit code, the pointer to the bits can be accessed with 32 bit offsets in assembly, like all huge objects in Windows.</P>
+
+<P><B>See Also</B></P>
+
+<P><A HREF="wing414i.htm">WinGCreateDC</A> <A HREF="wing683a.htm">WinGCreateBitmap</A> <A HREF="wing8g8p.htm">BITMAPINFO</A> <A HREF="wing8g8p.htm">BITMAPINFOHEADER</A></P>
+
+</BODY>
+</HTML>

@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>Managing Palettes in a WinG Application</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="Palette">
+</OBJECT>
+
+<P><A NAME="yjtzw6"></A>Managing Palettes in a WinG Application</P>
+
+<P>DOS executes only one application at a time, so every DOS application has the freedom to modify the hardware palette on palette devices (such as VGA) without interfering with other active applications. In the multitasking Windows environment, applications must modify the palette through the Palette Manager to ensure friendly interoperability of applications.</P>
+
+<P>The most common programming error in palettized Windows applications stems from the system selecting the stock system palette into devices acquired through <A HREF="wing8g8p.htm">GetDC</A> or through a <A HREF="wing8g8p.htm">WM_PAINT</A> message. The application must call <A HREF="wing8g8p.htm">SelectPalette</A> and <A HREF="wing8g8p.htm">RealizePalette</A> to set and activate a palette in these DCs, and the palette information survives in the DC only in the time between <A HREF="wing8g8p.htm">GetDC</A> and <A HREF="wing8g8p.htm">ReleaseDC</A> calls.</P>
+
+<P>The following code snippet will result in an image mapped to the <A HREF="wing7gja.htm">static colors</A>:</P>
+
+<P>HDC hdc = GetDC(hwnd);</P>
+
+<P>SelectPalette(hdc, hpal, FALSE);</P>
+
+<P>RealizePalette(hdc);</P>
+
+<P>ReleaseDC(hwnd, hdc);// Palette information lost!!</P>
+
+<P>...</P>
+
+<P>hdc = GetDC(hwnd);// DC with stock palette selected!!</P>
+
+<P>BitBlt(hdc, x,y,width,height, source, 0,0, SRCCOPY);</P>
+
+<P>ReleaseDC(hwnd, hdc);</P>
+
+<P>Ron Gery's article "The Palette Manager: How and Why" (Microsoft Technical Article, 23 March 1992) describes the mechanisms of the Palette Manager in depth. The following articles discuss optimizing Palette Manager use in WinG applications.</P>
+
+<P><A HREF="wing9dwz.htm"><B>Using an Identity Palette</B></A></P>
+
+<P><A HREF="wing7ui6.htm"><B>Palette Animation With WinG</B></A></P>
+
+<P><A HREF="wing3kts.htm"><B>Accessing a Full Palette Using SYSPAL_NOSTATIC</B></A></P>
+
+</BODY>
+</HTML>

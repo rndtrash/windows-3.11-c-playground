@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>DIB Orientation</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="Bottom-Up">
+	<PARAM NAME="Keyword" VALUE="Code Samples">
+	<PARAM NAME="Keyword" VALUE="Orientation">
+	<PARAM NAME="Keyword" VALUE="Top-Down">
+	<PARAM NAME="Keyword" VALUE="WinGBitmap">
+</OBJECT>
+
+<P><A NAME="dib_orientation"></A>DIB Orientation</P>
+
+<P>The most frustrating thing about working with DIBs is that DIBs are usually oriented with the bottommost scanline stored first in memory, the exact opposite of the usual device-dependent bitmap orientation. This standard type of Windows DIB is called a <A HREF="wing8zq9.htm">bottom-up</A> DIB.</P>
+
+<P>WinG hides the orientation of DIBs from an application unless the application wants to know. Drawing into a WinGDC using GDI functions and blting the WinGDC to the display using either of the WinG DIB copy commands (<A HREF="wing4k9t.htm">WinGStretchBlt</A> or <A HREF="wing7kaf.htm">WinGBitBlt</A>) results in an image that is almost identical to one created using GDI to draw directly onto a display DC. See the <A HREF="wing41km.htm">Using GDI With WinGDCs</A> article for more information.</P>
+
+<P>If you don't plan on writing custom drawing routines and will not be using existing Windows 3.1 DIB-to-screen functions (such as <A HREF="wing8g8p.htm">StretchDIBits</A> or <A HREF="wing8g8p.htm">SetDIBitsToDevice</A>), you can skip the rest of this section</P>
+
+<P>If you do plan on writing custom drawing routines or just want to know how they work, this section will begin to alleviate the confusion. The Microsoft Technical Articles "DIBs and Their Use" by Ron Gery and "Animation in Windows" by Herman Rodent will flesh out the ideas presented here, provide helpful advice, and describe DIBs in depth. The <A HREF="wing394d.htm">DOGGIE</A> sample in the WinG SDK and the TRIQ sample from Microsoft's GDI Technical Notes show how to draw into a memory DIB. TRIQ is listed in the section <A HREF="wing7vvp.htm">Further Reading</A>.</P>
+
+<P>Confusion with <A HREF="wing8zq9.htm">bottom-up</A> DIBs inevitably stems from the fact that the bottommost scanline is stored first in memory, giving a coordinate space where (0, 0) is the lower left corner of the image. Windows uses (0, 0) as the upper left corner of the display and of device dependent bitmaps, meaning that the Y coordinates of <A HREF="wing8zq9.htm">bottom-up</A> DIBs are inverted. In the diagram below, the smiling face casts its gaze towards the DIB origin, but when translated to the display with <A HREF="wing4k9t.htm">WinGStretchBlt</A> or <A HREF="wing7kaf.htm">WinGBitBlt</A>, it looks away from the display origin.</P>
+
+<P><IMG SRC="bm1.gif" ALT="" BORDER=0></P>
+
+<P><B>Bottom-Up DIBs are flipped when copied to the display</B></P>
+
+<P><A HREF="wing4k9t.htm">WinGStretchBlt</A>, <A HREF="wing7kaf.htm">WinGBitBlt</A>, <A HREF="wing8g8p.htm">StretchDIBits</A>, and <A HREF="wing8g8p.htm">SetDIBitsToDevice</A> invert the <A HREF="wing8zq9.htm">bottom-up</A> DIB as they draw it to the screen.</P>
+
+<P>For an 8-bit bottom-up DIB, the address in memory from which the screen pixel (X, Y) is retrieved can be found with these equations:</P>
+
+<P>// Calculate actual bits used per scan line</P>
+
+<P>DibWidthBits = (UINT)lpBmiHeader-&gt;biWidth *</P>
+
+<P>(UINT)lpBmiHeader-&gt;biBitCount);</P>
+
+<P>// And align it to a 32 bit boundary</P>
+
+<P>DibWidthBytes = ((DibWidthBits + 31) &amp; (~31)) / 8;</P>
+
+<P>pPixelXY = DibAddr + (DibHeight - 1 - Y) * DibWidthBytes + X</P>
+
+<P>where DibAddr is the base address of the DIB, DibHeight is the height of the DIB, lpBmiHeader is a pointer to a <A HREF="wing8g8p.htm">BITMAPINFOHEADER</A> describing the DIB, and DibWidthBytes is the DWORD-aligned offset of bytes in memory from any X in one scanline to any X in the next scanline. In DIBs, every scanline begins at a DWORD-aligned memory address, with extra bytes added as needed at the end of the previous scanline.</P>
+
+<P>Top-Down DIBs</P>
+
+<P>Another kind of DIB, called a <A HREF="wing7jfs.htm">top-down</A> DIB, is stored with the same orientation as most device-dependent bitmaps: the first scanline in memory is the top of the image. <A HREF="wing7jfs.htm">Top-down</A> DIBs are identified by a negative biHeight entry in their <A HREF="wing8g8p.htm">BITMAPINFOHEADER</A> structures.</P>
+
+<P>Sometimes, WinG can greatly improve the speed of a DIB-to-screen copy by using a <A HREF="wing7jfs.htm">top-down</A> DIB because it can avoid inverting the DIB to a device-dependent format. When this is the case, <A HREF="wing33hw.htm">WinGRecommendDIBFormat</A> will return a negative value in the biHeight field of the passed <A HREF="wing8g8p.htm">BITMAPINFOHEADER</A> structure.</P>
+
+<P>If you are writing custom DIB drawing routines, you will have to handle <A HREF="wing7jfs.htm">top-down</A> DIBs for best performance because there is a good chance that WinG will recommend them with <A HREF="wing33hw.htm">WinGRecommendDibFormat</A>.</P>
+
+<P><A HREF="wing4k9t.htm">WinGStretchBlt</A> and <A HREF="wing7kaf.htm">WinGBitBlt</A> recognize <A HREF="wing7jfs.htm">top-down</A> DIBs and handle them correctly, but <B>Windows 3.1 functions such as StretchDIBits and SetDIBitsToDevice will not work properly with top-down DIBs unless you intentionally mirror the image.</B></P>
+
+<P><IMG SRC="bm2.gif" ALT="" BORDER=0></P>
+
+<P><B>Top-Down DIBs are copied directly to the display</B></P>
+
+<P>For an 8-bit <A HREF="wing7jfs.htm">top-down</A> DIB, the memory address of the pixel (X, Y) can be found with this equation:</P>
+
+<P>PixelAddr = DibAddr + Y * DibWidthBytes + X</P>
+
+<P>where DibAddr is the base address of the DIB and DibWidthBytes is the DWORD-aligned offset of bytes in memory from the beginning of one scanline to the next.</P>
+
+<P>The <A HREF="wing4i5q.htm">PALANIM</A> sample application (in the SAMPLES\PALANIM subdirectory of the WinG development kit) includes a routine to draw horizontal lines into a DIB. To do this, it determines the orientation of the target DIB and performs its calculations accordingly.</P>
+
+<P>The <A HREF="wing394d.htm">DOGGIE</A> sample application (in the SAMPLES\DOGGIE subdirectory of the WinG development kit) includes a routine to copy one DIB into another with a transparent color. The assembly function that does this also behaves well with both DIB orientations.</P>
+
+</BODY>
+</HTML>

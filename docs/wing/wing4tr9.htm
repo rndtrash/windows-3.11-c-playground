@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>Maximizing Performance With WinG</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="Performance">
+</OBJECT>
+
+<P><A NAME="performance"></A>Maximizing Performance With WinG</P>
+
+<P>Here is the WinG Programmer's Guide to Achieving WinG <A HREF="wing5ibd.htm">Nirvana</A>, the Top Ten ways to maximize blt performance under Windows using WinG.</P>
+
+<P><B>10.  Take Out Your Monochrome Debugging Card and Unplug Network Connections</B></P>
+
+<P>Eight bit monochrome video cards can turn the 16 bit 8 MHz ISA bus into an 8 bit 4 MHz PC bus, cutting your video bus bandwidth by up to 75%. Monochrome cards are an invaluable aid when debugging graphical applications, but when timing or running final tests, remove the card for maximum speed.</P>
+
+<P>Incoming network packets during WinG runtime profiling cause asynchronous interrupts that steal CPU time from the time-sensitive profiling process. This may result in noticeable timing errors that lead to sub-optimal performance. For best results, unplug any network connections before running a WinG application for the first time on a new configuration, then plug the network connection back in when the WinG profiling process is complete.</P>
+
+<P>(NOTE: Microsoft is not responsible for damage caused by incorrectly handling hardware).</P>
+
+<P><B>9.  Store WinGBitmap Surface Pointer and BITMAPINFO</B></P>
+
+<P><A HREF="wing683a.htm">WinGCreateBitmap</A> takes a <A HREF="wing8g8p.htm">BITMAPINFO</A>, creates an <A HREF="wing8g8p.htm">HBITMAP</A>, and returns a pointer to the new bitmap surface. Store the <A HREF="wing8g8p.htm">BITMAPINFO</A> and pointer at creation time with the <A HREF="wing8g8p.htm">HBITMAP</A> rather than calling <A HREF="wing3t67.htm">WinGGetDIBPointer</A> when you need it.</P>
+
+<P><B>8.  Don't Make Redundant GDI Calls</B></P>
+
+<P>GDI objects such as brushes, fonts, and pens, take time to create, select, and destroy. Save time by creating frequently used objects once and caching them until they are no longer needed. Move the creation and selection of objects as far out of your inner loops as possible.</P>
+
+<P><B>7.  Special Purpose Code May Be Faster Than GDI</B></P>
+
+<P>There may be many ways to accomplish a given graphics operation using GDI or custom graphics code in your application. Special purpose code can be faster than the general purpose GDI code, but custom code often incurs associated development and testing overhead. Determine if GDI can accomplish the operation and if the performance is acceptable for your problem. Weigh the alternatives carefully and see number 6 below.</P>
+
+<P><B>6.  Time Everything, Assume Nothing</B></P>
+
+<P>Software and its interactions with hardware are complex. Don't assume one technique is faster than another; time both. Within GDI, some APIs do more work than others, and there are sometimes multiple ways to do a single operation--not all techniques will be the same speed.</P>
+
+<P>Remember the old software development adage: 90% of your time is spent executing 10% of the code. If you can find the 10% through profiling and optimize it, your application will be noticeably faster.</P>
+
+<P>Timing results may depend on the runtime platform. An application's performance on your development machine may be significantly different from its performance on a different runtime machine. For absolute maximum speed, implement a variety of algorithms, time them at runtime or at installation, and choose code paths accordingly. If you choose to time at installation, remember that changes to video drivers and hardware configuration after your application has been installed can have a significant effect on runtime speed.</P>
+
+<P>This tip extends even to WinG. <A HREF="wing33hw.htm">WinGRecommendDibFormat</A> will tell you the format of the fastest 1:1 identity unclipped blt to the screen, but if your application requires other blt types, such as a 1:2 stretch, time <A HREF="wing8zq9.htm">bottom-up</A> and <A HREF="wing7jfs.htm">top-down</A> cases separately and decide for yourself which to use.</P>
+
+<P><B>5.  Don't Stretch</B></P>
+
+<P>Stretching a <A HREF="wing683a.htm">WinGBitmap</A> requires more work than just blting it. If you must stretch, stretching by factors of 2 will be fastest.</P>
+
+<P>On the other hand, if your application is pixel-bound (it spends more time writing pixels to the bitmap than it does blting), it may be faster to stretch a small <A HREF="wing683a.htm">WinGBitmap</A> to a larger window than it is to fill and blt a <A HREF="wing683a.htm">WinGBitmap</A> with the same dimensions as the window. Your application can respond to the <A HREF="wing8g8p.htm">WM_GETMINMAXINFO</A> message to restrict the size of your window if you don't want to deal with this problem.</P>
+
+<P><B>4.  Don't Blt</B></P>
+
+<P>"The fastest code is the code that isn't called." Blt the smallest area possible as seldom as possible. Of course, figuring out the smallest area to blt might take longer than just blting a larger area. For example, a dirty rectangle sprite system could use complex algorithms to calculate the absolute minimum rectangles to update, but it might spend more time doing this than just blting the union of the dirty areas. The runtime environment can affect which method is faster. Again, time it to make sure.</P>
+
+<P>If you must blt, try to align the destination on the screen to DWORD (4-byte) boundaries. On an 8-bit display, this means ensuring that the X value of the upper-left corner of the destination rectangle is evenly divisible by 4. Applications can use the <A HREF="wing8g8p.htm">GetDCOrg</A> function to calculate the destination alignment. Or, if you're blting to the entire client area of your window, make sure that the X value of the upper-left corner of the client area is DWORD aligned on the screen. It's fairly easy to make sure you align your blts, and it can noticeably increase their speed.</P>
+
+<P><B>3.  Don't Clip</B></P>
+
+<P>Selecting GDI clip regions into the destination DC or placing windows (like floating tool bars) over the destination DC can slow the blt speed.</P>
+
+<P>Clip regions may seem like a good way to reduce the number of pixels actually sent to the screen, but someone has to do the work. As number 4 and number 7 discuss above, you may be better off doing the work yourself rather than using GDI.</P>
+
+<P>An easy way to test your application's performance when clipped is to start the CLOCK.EXE program supplied with Windows. Set it to Always On Top and move it over your client area.</P>
+
+<P><B>2.  Use an Identity Palette</B></P>
+
+<P>WinGBitmaps without <A HREF="wing7bxq.htm">identity palettes</A> require a color translation per pixel when blted. 'Nuff said.</P>
+
+<P>See the <A HREF="wing9dwz.htm">Using an Identity Palette</A> article for specific information about what identity palettes are, how they work, and how you can use them.</P>
+
+<P><B>1.  Use the Recommended DIB Format</B></P>
+
+<P>WinG adapts itself to the hardware available at runtime to achieve optimum performance on every platform. Every hardware and software combination can be different, and the best way to guarantee the best blt performance is to use the DIB parameters returned by <A HREF="wing33hw.htm">WinGRecommendDibFormat</A> in calls to <A HREF="wing683a.htm">WinGCreateBitmap</A>. If you do this, remember that your code must support both <A HREF="wing8zq9.htm">bottom-up</A> and <A HREF="wing7jfs.htm">top-down</A> DIB formats. See the <A HREF="wing7sxa.htm">DIB Orientation</A> article for more information on handling these formats.</P>
+
+</BODY>
+</HTML>

@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>&lt;Copy WinGDC Creation Code to Clipboard&gt;</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<P><A NAME="4s1iax"></A>HBITMAP ghBitmapMonochrome = 0;</P>
+
+<P>HDC Create100x100WinGDC(void)</P>
+
+<P>{</P>
+
+<P>HDC hWinGDC;</P>
+
+<P>HBITMAP hBitmapNew;</P>
+
+<P>struct {</P>
+
+<P>BITMAPINFOHEADER InfoHeader;</P>
+
+<P>RGBQUAD ColorTable[256];</P>
+
+<P>} Info;</P>
+
+<P>void far *pSurfaceBits;</P>
+
+<P>// Set up an optimal bitmap</P>
+
+<P>if (WinGRecommendDIBFormat((BITMAPINFO far *)&amp;Info) == FALSE)</P>
+
+<P>return 0;</P>
+
+<P>// Set the width and height of the DIB but preserve the</P>
+
+<P>// sign of biHeight in case top-down DIBs are faster</P>
+
+<P>Info.InfoHeader.biHeight *= 100;</P>
+
+<P>Info.InfoHeader.biWidth = 100;</P>
+
+<P>//*** DON'T FORGET A COLOR TABLE! ***</P>
+
+<P>//*** COLOR TABLE CODE HERE ***</P>
+
+<P>// Create a WinGDC and Bitmap, then select away</P>
+
+<P>hWinGDC = WinGCreateDC();</P>
+
+<P>if (hWinGDC)</P>
+
+<P>{</P>
+
+<P>hBitmapNew = WinGCreateBitmap(hWinGDC,</P>
+
+<P>(BITMAPINFO far *)&amp;Info, &amp;pSurfaceBits);</P>
+
+<P>if (hBitmapNew)</P>
+
+<P>{</P>
+
+<P>ghBitmapMonochrome = (HBITMAP)SelectObject(hWinGDC,</P>
+
+<P>hBitmapNew);</P>
+
+<P>}</P>
+
+<P>else</P>
+
+<P>{</P>
+
+<P>DeleteDC(hWinGDC);</P>
+
+<P>hWinGDC = 0;</P>
+
+<P>}</P>
+
+<P>}</P>
+
+<P>return hWinGDC;</P>
+
+<P>}</P>
+
+<P>void Destroy100x100WinGDC(HDC hWinGDC)</P>
+
+<P>{</P>
+
+<P>HBITMAP hBitmapOld;</P>
+
+<P>if (hWinGDC &amp;&amp; ghBitmapMonochrome)</P>
+
+<P>{</P>
+
+<P>// Select the stock 1x1 monochrome bitmap back in</P>
+
+<P>hBitmapOld = (HBITMAP)SelectObject(hWinGDC, ghBitmapMonochrome);</P>
+
+<P>DeleteObject(hBitmapOld);</P>
+
+<P>DeleteDC(hWinGDC);</P>
+
+<P>}</P>
+
+<P>}</P>
+
+</BODY>
+</HTML>

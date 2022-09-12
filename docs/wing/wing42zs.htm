@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>WinG Halftoning Sample</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="aWinGHalftoneTranslation">
+	<PARAM NAME="Keyword" VALUE="DibHalftoneDIB">
+	<PARAM NAME="Keyword" VALUE="Halftoning">
+	<PARAM NAME="Keyword" VALUE="Sample Code">
+</OBJECT>
+
+<P><A NAME="1har_qh"></A>WinG Halftoning Sample</P>
+
+<P>HALFTONE.EXE, found in the SAMPLES\HALFTONE subdirectory of the WinG development kit, dithers 24-bit DIBs to the <A HREF="wing81uv.htm">WinG Halftone Palette</A> using an 8x8 ordered dither.</P>
+
+<P>The main function, DibHalftoneDIB in HALFTONE.C, does the real work in the dithering. The process of calculating an ordered dither is too complex to describe here, but a description of the techniques involved can be found in "Computer Graphics: Principles and Practice" by Foley, van Dam, Feiner, and Hughes. See the <A HREF="wing7vvp.htm">Further Reading</A> article for more information on this book.</P>
+
+<P>The aWinGHalftoneTranslation array found in HTTABLES.C converts a 2.6-bit-per-pixel computed halftone index into an entry in the halftone palette. To calculate the nearest match of an RGB color to the halftone palette, HALFTONE uses the following formula:</P>
+
+<P>HalftoneIndex = (Red / 51) + (Green / 51) * 6 + (Blue / 51) * 36;</P>
+
+<P>HalftoneColorIndex = aWinGHalftoneTranslation [HalftoneIndex];</P>
+
+<P>See also the documentation for the <A HREF="wing646m.htm">WinGCreateHalftoneBrush </A> function and the <A HREF="wing81uv.htm">Halftoning With WinG</A> article.</P>
+
+</BODY>
+</HTML>

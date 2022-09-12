@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>&lt;Copy ClearSystemPalette Code to Clipboard&gt;</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<P><A NAME="14qq_xp"></A>void ClearSystemPalette(void)</P>
+
+<P>{</P>
+
+<P>//*** A dummy palette setup</P>
+
+<P>struct</P>
+
+<P>{</P>
+
+<P>WORD Version;</P>
+
+<P>WORD NumberOfEntries;</P>
+
+<P>PALETTEENTRY aEntries[256];</P>
+
+<P>} Palette =</P>
+
+<P>{</P>
+
+<P>0x300,</P>
+
+<P>256</P>
+
+<P>};</P>
+
+<P>HPALETTE ScreenPalette = 0;</P>
+
+<P>HDC ScreenDC;</P>
+
+<P>int Counter;</P>
+
+<P>//*** Reset everything in the system palette to black</P>
+
+<P>for(Counter = 0; Counter &lt; 256; Counter++)</P>
+
+<P>{</P>
+
+<P>Palette.aEntries[Counter].peRed = 0;</P>
+
+<P>Palette.aEntries[Counter].peGreen = 0;</P>
+
+<P>Palette.aEntries[Counter].peBlue = 0;</P>
+
+<P>Palette.aEntries[Counter].peFlags = PC_NOCOLLAPSE;</P>
+
+<P>}</P>
+
+<P>//*** Create, select, realize, deselect, and delete the palette</P>
+
+<P>ScreenDC = GetDC(NULL);</P>
+
+<P>ScreenPalette = CreatePalette((LOGPALETTE *)&amp;Palette);</P>
+
+<P>if (ScreenPalette)</P>
+
+<P>{</P>
+
+<P>ScreenPalette = SelectPalette(ScreenDC,ScreenPalette,FALSE);</P>
+
+<P>RealizePalette(ScreenDC);</P>
+
+<P>ScreenPalette = SelectPalette(ScreenDC,ScreenPalette,FALSE);</P>
+
+<P>DeleteObject(ScreenPalette);</P>
+
+<P>}</P>
+
+<P>ReleaseDC(NULL, ScreenDC);</P>
+
+<P>}</P>
+
+</BODY>
+</HTML>

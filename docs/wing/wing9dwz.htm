@@ -1,0 +1,293 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>Using an Identity Palette</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="ClearSystemPalette">
+	<PARAM NAME="Keyword" VALUE="Code Samples">
+	<PARAM NAME="Keyword" VALUE="CreateIdentityPalette">
+	<PARAM NAME="Keyword" VALUE="Identity Palette">
+	<PARAM NAME="Keyword" VALUE="Palette">
+	<PARAM NAME="Keyword" VALUE="Static Colors">
+	<PARAM NAME="Keyword" VALUE="System Palette">
+</OBJECT>
+
+<P><A NAME="identity_palettes"></A>Using an Identity Palette</P>
+
+<P>The Windows Palette Manager, described in depth in Ron Gery's technical article "The Palette Manager: How and Why" (see the <A HREF="wing7vvp.htm">Further Reading</A> section for details) arbitrates conflicts between Windows applications vying for color entries in a single hardware palette (known as the <A HREF="wing7fc4.htm">system palette</A>). It gives each application it's own virtual 256-color palette, called a <A HREF="wing5lo0.htm">logical palette</A>, and translates entries in the <A HREF="wing5lo0.htm">logical palette</A> to entries in the <A HREF="wing7fc4.htm">system palette</A> as they are needed for blting images to the screen.</P>
+
+<P>An <A HREF="wing7bxq.htm">identity palette</A> is a <A HREF="wing5lo0.htm">logical palette</A> which exactly matches the current <A HREF="wing7fc4.htm">system palette</A>. An <A HREF="wing7bxq.htm">identity palette</A> does not require translation of palette entries, so using an <A HREF="wing7bxq.htm">identity palette</A> can drastically improve the speed with which you can blt WinGDCs to the screen.</P>
+
+<P>The WinG <A HREF="wing6yrc.htm">Halftone Palette</A> is an <A HREF="wing7bxq.htm">identity palette</A>. This article describes how to create your own identity palettes for maximum WinG blt speed.</P>
+
+<P>Static Colors</P>
+
+<P>The Palette Manager reserves a number of colors in the palette, called the <A HREF="wing7gja.htm">static colors</A>, which it uses to draw system elements such as window captions, menus, borders, and scroll bars. An <A HREF="wing7bxq.htm">identity palette</A> must include the static colors in the appropriate palette entries.</P>
+
+<P>The display driver defines the actual RGB values of the <A HREF="wing7gja.htm">static colors</A>, so they must always be determined at run time. The <A HREF="wing8g8p.htm">GetSystemPaletteEntries</A> will retrieve the colors currently in the <A HREF="wing7fc4.htm">system palette</A>, and you can isolate the <A HREF="wing7gja.htm">static colors</A> using the <A HREF="wing8g8p.htm">SIZEPALETTE</A> and <A HREF="wing8g8p.htm">NUMCOLORS</A> capability indices with <A HREF="wing8g8p.htm">GetDeviceCaps</A> and a little knowledge of how the Palette Manager works.</P>
+
+<P>The <A HREF="wing7gja.htm">static colors</A> are split in half and stored at either end of the <A HREF="wing7fc4.htm">system palette</A>. If there are <I>nColors</I> possible entries in the <A HREF="wing7fc4.htm">system palette</A> and there are <I>nStaticColors</I> <A HREF="wing7gja.htm">static colors</A>, then the <A HREF="wing7gja.htm">static colors</A> will be found in entries 0 through <I>nStaticColors</I>/2 - 1 and entries <I>nColors</I> - <I>nStaticColors</I>/2 through <I>nColors</I>-1 in the <A HREF="wing7fc4.htm">system palette</A>. Typically, there are 20 static colors, found in indices 0-9 and 246-255 of a 256-color palette. The peFlags portion of these <A HREF="wing8g8p.htm">PALETTEENTRY</A> structures must be set to zero.</P>
+
+<P>The <A HREF="wing8g8p.htm">SetSystemPaletteUse</A> API turns use of the <A HREF="wing7gja.htm">static colors</A> on and off for the system. Using <A HREF="wing8g8p.htm">SYSPAL_STATIC</A>, 20 entries will be reserved in the palette. <A HREF="wing8g8p.htm">SYSPAL_NOSTATIC</A> reserves only 2 entries, which must be mapped to black and white. See the <A HREF="wing3kts.htm">Accessing a Full Palette Using SYSPAL_NOSTATIC</A> article for more information.</P>
+
+<P>Other Colors</P>
+
+<P>The remaining non-static colors in the <A HREF="wing5lo0.htm">logical palette</A> may be defined by the application, but they must be marked as <A HREF="wing8g8p.htm">PC_NOCOLLAPSE</A> or <A HREF="wing8g8p.htm">PC_RESERVED</A> (see the <A HREF="wing8g8p.htm">PALETTEENTRY</A> documentation for a description) to ensure an identity palette.</P>
+
+<P>A palette containing the <A HREF="wing7gja.htm">static colors</A> in the appropriate entries with the remaining entries marked <A HREF="wing8g8p.htm">PC_NOCOLLAPSE</A>, selected and realized into a DC, becomes an <U>identity palette</U> (with the exception of a palette with duplicates of the high-intensity colors as mentioned below). Because no translation to the <A HREF="wing7fc4.htm">system palette</A> is required, the Palette Manager can step aside gracefully and leave you to achieve maximum blt bandwidth.</P>
+
+<P>If your palette contains duplicates of the high-intensity <A HREF="wing7gja.htm">static colors</A> (the colors at the top of the palette) you need to set the duplicate entries to <A HREF="wing8g8p.htm">PC_RESERVED</A> so GDI doesn't map the upper colors in your logical palette into those slots. <A HREF="wing8g8p.htm">PC_RESERVED</A> tells GDI to not only fail to map the current entry into another, but it also keeps other entries (the high-intensity colors in this case) from mapping into the current entry. <A HREF="wing8g8p.htm">PC_NOCOLLAPSE</A> only stops the current entry from mapping into other entries, but other entries can still map into the current entry making the palette non-identity.</P>
+
+<P>Creating an Identity Palette</P>
+
+<P>The CreateIdentityPalette() function below shows how to create an identity palette from an array of <A HREF="wing8g8p.htm">RGBQUAD</A> structures. Before you realize an identity palette for the first time, it is a good idea to clear the system palette by realizing a completely black palette, as the ClearSystemPalette() function below does. This will ensure that palette-managed applications executed before your application will not affect the identity mapping of your carefully constructed palette.</P>
+
+<P>To make sure that you have successfully created and are using an <A HREF="wing7bxq.htm">identity palette</A>, you can tell WinG to send debugging messages to the standard debug output, as described in the <A HREF="wing2puv.htm">Debugging With WinG</A> article.</P>
+
+<P>The <A HREF="wing4i5q.htm">PALANIM</A> sample (in the SAMPLES\PALANIM subdirectory of the WinG development kit) uses these routines to create a 256-entry identity palette filled with a wash of color.</P>
+
+<P><A HREF="wing0x2m.htm">Click Here</A> to copy the CreateIdentityPalette() code sample to the clipboard.</P>
+
+<P><A HREF="wing39io.htm">Click Here</A> to copy the ClearSystemPalette() code sample to the clipboard.</P>
+
+<P><A HREF="wing8g8p.htm">HPALETTE</A> CreateIdentityPalette(<A HREF="wing8g8p.htm">RGBQUAD</A> aRGB[], int nColors)</P>
+
+<P>{</P>
+
+<P>int i;</P>
+
+<P>struct {</P>
+
+<P>WORD Version;</P>
+
+<P>WORD NumberOfEntries;</P>
+
+<P><A HREF="wing8g8p.htm">PALETTEENTRY</A> aEntries[256];</P>
+
+<P>} Palette =</P>
+
+<P>{</P>
+
+<P>0x300,</P>
+
+<P>256</P>
+
+<P>};</P>
+
+<P>//*** Just use the screen DC where we need it</P>
+
+<P><A HREF="wing8g8p.htm">HDC</A> hdc = <A HREF="wing8g8p.htm">GetDC</A>(NULL);</P>
+
+<P>//*** For <A HREF="wing8g8p.htm">SYSPAL_NOSTATIC</A>, just copy the color table into</P>
+
+<P>//*** a <A HREF="wing8g8p.htm">PALETTEENTRY</A> array and replace the first and last entries</P>
+
+<P>//*** with black and white</P>
+
+<P>if (<A HREF="wing8g8p.htm">GetSystemPaletteUse</A>(hdc) == <A HREF="wing8g8p.htm">SYSPAL_NOSTATIC</A>)</P>
+
+<P>{</P>
+
+<P>//*** Fill in the palette with the given values, marking each</P>
+
+<P>//*** as <A HREF="wing8g8p.htm">PC_NOCOLLAPSE</A></P>
+
+<P>for(i = 0; i &lt; nColors; i++)</P>
+
+<P>{</P>
+
+<P>Palette.aEntries[i].peRed = aRGB[i].rgbRed;</P>
+
+<P>Palette.aEntries[i].peGreen = aRGB[i].rgbGreen;</P>
+
+<P>Palette.aEntries[i].peBlue = aRGB[i].rgbBlue;</P>
+
+<P>Palette.aEntries[i].peFlags = <A HREF="wing8g8p.htm">PC_NOCOLLAPSE</A>;</P>
+
+<P>}</P>
+
+<P>//*** Mark any unused entries <A HREF="wing8g8p.htm">PC_NOCOLLAPSE</A></P>
+
+<P>for (; i &lt; 256; ++i)</P>
+
+<P>{</P>
+
+<P>Palette.aEntries[i].peFlags = <A HREF="wing8g8p.htm">PC_NOCOLLAPSE</A>;</P>
+
+<P>}</P>
+
+<P>//*** Make sure the last entry is white</P>
+
+<P>//*** This may replace an entry in the array!</P>
+
+<P>Palette.aEntries[255].peRed = 255;</P>
+
+<P>Palette.aEntries[255].peGreen = 255;</P>
+
+<P>Palette.aEntries[255].peBlue = 255;</P>
+
+<P>Palette.aEntries[255].peFlags = 0;</P>
+
+<P>//*** And the first is black</P>
+
+<P>//*** This may replace an entry in the array!</P>
+
+<P>Palette.aEntries[0].peRed = 0;</P>
+
+<P>Palette.aEntries[0].peGreen = 0;</P>
+
+<P>Palette.aEntries[0].peBlue = 0;</P>
+
+<P>Palette.aEntries[0].peFlags = 0;</P>
+
+<P>}</P>
+
+<P>else</P>
+
+<P>//*** For <A HREF="wing8g8p.htm">SYSPAL_STATIC</A>, get the twenty static colors into</P>
+
+<P>//*** the array, then fill in the empty spaces with the</P>
+
+<P>//*** given color table</P>
+
+<P>{</P>
+
+<P>int nStaticColors;</P>
+
+<P>int nUsableColors;</P>
+
+<P>//*** Get the <A HREF="wing7gja.htm">static colors</A> from the <A HREF="wing7fc4.htm">system palette</A></P>
+
+<P>nStaticColors = <A HREF="wing8g8p.htm">GetDeviceCaps</A>(hdc, <A HREF="wing8g8p.htm">NUMCOLORS</A>);</P>
+
+<P><A HREF="wing8g8p.htm">GetSystemPaletteEntries</A>(hdc, 0, 256, Palette.aEntries);</P>
+
+<P>//*** Set the peFlags of the lower static colors to zero</P>
+
+<P>nStaticColors = nStaticColors / 2;</P>
+
+<P>for (i=0; i&lt;nStaticColors; i++)</P>
+
+<P>Palette.aEntries[i].peFlags = 0;</P>
+
+<P>//*** Fill in the entries from the given color table</P>
+
+<P>nUsableColors = nColors - nStaticColors;</P>
+
+<P>for (; i&lt;nUsableColors; i++)</P>
+
+<P>{</P>
+
+<P>Palette.aEntries[i].peRed = aRGB[i].rgbRed;</P>
+
+<P>Palette.aEntries[i].peGreen = aRGB[i].rgbGreen;</P>
+
+<P>Palette.aEntries[i].peBlue = aRGB[i].rgbBlue;</P>
+
+<P>Palette.aEntries[i].peFlags = <A HREF="wing8g8p.htm">PC_NOCOLLAPSE</A>;</P>
+
+<P>}</P>
+
+<P>//*** Mark any empty entries as <A HREF="wing8g8p.htm">PC_NOCOLLAPSE</A></P>
+
+<P>for (; i&lt;256 - nStaticColors; i++)</P>
+
+<P>Palette.aEntries[i].peFlags = <A HREF="wing8g8p.htm">PC_NOCOLLAPSE</A>;</P>
+
+<P>//*** Set the peFlags of the upper static colors to zero</P>
+
+<P>for (i = 256 - nStaticColors; i&lt;256; i++)</P>
+
+<P>Palette.aEntries[i].peFlags = 0;</P>
+
+<P>}</P>
+
+<P>//*** Remember to release the DC!</P>
+
+<P><A HREF="wing8g8p.htm">ReleaseDC</A>(NULL, hdc);</P>
+
+<P>//*** Return the palette</P>
+
+<P>return <A HREF="wing8g8p.htm">CreatePalette</A>((<A HREF="wing8g8p.htm">LOGPALETTE</A> *)&amp;Palette);</P>
+
+<P>}</P>
+
+<P>void ClearSystemPalette(void)</P>
+
+<P>{</P>
+
+<P>//*** A dummy palette setup</P>
+
+<P>struct</P>
+
+<P>{</P>
+
+<P>WORD Version;</P>
+
+<P>WORD NumberOfEntries;</P>
+
+<P><A HREF="wing8g8p.htm">PALETTEENTRY</A> aEntries[256];</P>
+
+<P>} Palette =</P>
+
+<P>{</P>
+
+<P>0x300,</P>
+
+<P>256</P>
+
+<P>};</P>
+
+<P><A HREF="wing8g8p.htm">HPALETTE</A> ScreenPalette = 0;</P>
+
+<P><A HREF="wing8g8p.htm">HDC</A> ScreenDC;</P>
+
+<P>int Counter;</P>
+
+<P>//*** Reset everything in the <A HREF="wing7fc4.htm">system palette</A> to black</P>
+
+<P>for(Counter = 0; Counter &lt; 256; Counter++)</P>
+
+<P>{</P>
+
+<P>Palette.aEntries[Counter].peRed = 0;</P>
+
+<P>Palette.aEntries[Counter].peGreen = 0;</P>
+
+<P>Palette.aEntries[Counter].peBlue = 0;</P>
+
+<P>Palette.aEntries[Counter].peFlags = <A HREF="wing8g8p.htm">PC_NOCOLLAPSE</A>;</P>
+
+<P>}</P>
+
+<P>//*** Create, select, realize, deselect, and delete the palette</P>
+
+<P>ScreenDC = <A HREF="wing8g8p.htm">GetDC</A>(NULL);</P>
+
+<P>ScreenPalette = <A HREF="wing8g8p.htm">CreatePalette</A>((LOGPALETTE *)&amp;Palette);</P>
+
+<P>if (ScreenPalette)</P>
+
+<P>{</P>
+
+<P>ScreenPalette = <A HREF="wing8g8p.htm">SelectPalette</A>(ScreenDC,ScreenPalette,FALSE);</P>
+
+<P><A HREF="wing8g8p.htm">RealizePalette</A>(ScreenDC);</P>
+
+<P>ScreenPalette = <A HREF="wing8g8p.htm">SelectPalette</A>(ScreenDC,ScreenPalette,FALSE);</P>
+
+<P><A HREF="wing8g8p.htm">DeleteObject</A>(ScreenPalette);</P>
+
+<P>}</P>
+
+<P><A HREF="wing8g8p.htm">ReleaseDC</A>(NULL, ScreenDC);</P>
+
+<P>}</P>
+
+</BODY>
+</HTML>

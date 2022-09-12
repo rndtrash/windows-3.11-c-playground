@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>WinGCreateHalftoneBrush</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="Halftoning">
+	<PARAM NAME="Keyword" VALUE="WinGCreateHalftoneBrush">
+</OBJECT>
+
+<P><A NAME="a4euh."></A>WinGCreateHalftoneBrush</P>
+
+<P>Creates a dithered pattern brush based on the WinG <A HREF="wing70th.htm">halftone palette</A>.</P>
+
+<P><A HREF="wing8g8p.htm"><B>HBRUSH</B></A> <B>WinGCreateHalftoneBrush(HDC </B><I>hdc</I>, <A HREF="wing8g8p.htm"><B>COLORREF</B></A> <I>Color</I>, <B>enum <A HREF="wing9qut.htm">WING_DITHER_TYPE</A></B> <I>DitherType</I><B>)</B></P>
+
+<P><B>Parameters</B></P>
+
+<TABLE cols=2 width=548>
+
+<TR VALIGN="top">
+<TD width=14%><I>hdc</I></TD>
+<TD width=86%>Specifies the DC with which the brush should be compatible.</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=14%><I>Color</I></TD>
+<TD width=86%>Specifies the color to be approximated by the brush.</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=14%><I>DitherType</I></TD>
+<TD width=86%>Specifies the dither pattern for the brush. Can be one of:
+<P>WING_DISPERSED_4x4</P>
+
+<P>WING_DISPERSED_8x8</P>
+
+<P>WING_CLUSTERED_4x4</P>
+</TD>
+</TR>
+</TABLE><BR>
+
+<P><B>Return Value</B></P>
+
+<P>Returns a handle to a GDI brush if successful. Otherwise, <B>WinGCreateHalftoneBrush</B> returns 0.</P>
+
+<P><B>Comments</B></P>
+
+<P>This API is intended for simulating true color on 8-bit devices. It will create a patterned brush using colors from the halftone palette regardless of the color resolution of the target device. If <I>hdc</I> refers to a 24-bit device, <B>WinGCreateHalftoneBrush</B> will <U>not</U> return a solid brush of the given color, it will return a colored dither pattern using colors that appear in the <A HREF="wing70th.htm">halftone palette</A>. On true-color devices, creating a solid brush that exactly matches the desired color is simple; <B>WinGCreateHalftoneBrush</B> lets you use the halftone patterns instead if you so desire.</P>
+
+<P>A halftone brush approximates the requested <I>Color</I> using combinations of colors in the halftone palette. Larger dither patterns give a better approximation of the desired color but require more area to show the approximation. Quality is subjective, so programmers should experiment with different dither types to find the one that suits their needs.</P>
+
+<P>If the target DC is a palette device, the WinG halftone palette must be selected into it and realized as an identity palette for correct visual results (See <A HREF="wing9dwz.htm">ClearSystemPalette</A>). Use the <A HREF="wing6yrc.htm">WinGCreateHalftonePalette</A> function to create a copy of the halftone palette, then select and realize it before using a halftone brush on a palette device.</P>
+
+<P>The WING_DISPERSED_nxn dither types create nxn patterns that approximate <I>Color</I> with a dispersed dot ordered dither.</P>
+
+<P>The WING_CLUSTERED_4x4 dither type creates a 4x4 pattern that approximates <I>Color</I> with a clustered dot ordered dither.</P>
+
+<P>Always free GDI objects such as brushes by calling <A HREF="wing8g8p.htm">DeleteObject</A> when the object is no longer needed.</P>
+
+<P><B>Maximizing Performance</B></P>
+
+<P>Avoid redundant creation, selection, and deletion of identical brushes as much as possible. If an application will be using the same brush repeatedly, it should create the brush once and save it for later use, deleting it when the application is complete.</P>
+
+<P><B>Example</B></P>
+
+<P>The <A HREF="wing15rr.htm">CUBE</A> sample application (in the SAMPLES\CUBE directory of the WinG Development Kit) allows the user to select the dither type for creating shaded brushes and provides a good experiment in using the different dither types.</P>
+
+<P><B>See Also</B></P>
+
+<P><A HREF="wing6yrc.htm">WinGCreateHalftonePalette</A> <A HREF="wing9qut.htm">WING_DITHER_TYPE</A> <A HREF="wing8g8p.htm">CreateDIBPatternBrush</A> <A HREF="wing8g8p.htm">CreateSolidBrush</A> <A HREF="wing81uv.htm">Halftoning With WinG</A> <A HREF="wing41km.htm">Using GDI With WinGDCs</A> <A HREF="wing4y0j.htm">Code Samples</A></P>
+
+</BODY>
+</HTML>

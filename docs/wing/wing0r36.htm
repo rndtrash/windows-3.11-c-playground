@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>DISPDIB and WinG</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="320x200">
+	<PARAM NAME="Keyword" VALUE="320x240">
+	<PARAM NAME="Keyword" VALUE="DISPDIB">
+	<PARAM NAME="Keyword" VALUE="DisplayDib">
+	<PARAM NAME="Keyword" VALUE="VGA">
+</OBJECT>
+
+<P><A NAME="dispdib"></A>DISPDIB and WinG</P>
+
+<P>Programmers that do not want to take advantage of the Windows user interface, want to run full screen in a low-resolution mode, or want direct access to the VGA hardware should consider using DISPDIB, a DLL that provides direct VGA hardware access under Windows through the DisplayDib function. Some applications may use both DISPDIB and WinG, giving the user the option of running in a full-screen VGA mode or a high-resolution window.</P>
+
+<P>Ordinarily, DisplayDib displays 256-color bitmaps in 320x200 or 320x240 modes until a key or mouse button was pressed, but you can take over the video indefinitely using the DISPLAYDIB_NOWAIT flag or the DISPLAYDIB_BEGIN and DISPLAYDIB_END flags. Given these flags, DisplayDib immediately returns control to your application, leaving it in a full-screen VGA mode and allowing your application to access the VGA hardware directly.</P>
+
+<P>While it has control of the screen, DISPDIB disables the Windows video driver. GDI has no effect on the display device, but all other Windows system components remain active. Your application can still use memory DCs (including WinGDCs) to modify images displayed using DISPDIB, and it continues to run as usual and to receive messages as usual, including timer, keyboard, and mouse messages (although the mouse pointer is not visible).</P>
+
+<P>Using DISPDIB, an application can take control of the display in a VGA mode. It can allocate an off-screen buffer using WinG, draw into the buffer using GDI, and take advantage of Windows memory management, networking, sound, timers, mouse handling, and other system services.</P>
+
+<P>Mouse coordinates received by an application using DISPDIB will be in the coordinate system of the original display driver. That is, if an application running in a 1024x768 Windows session switches to a 320x200 full-screen mode using DISPDIB, the system continues to return mouse coordinates as though the screen were 1024x768. The application must scale the mouse coordinates appropriately.</P>
+
+<P>Also note that your application using DISPDIB must be the active application when it calls DisplayDib.</P>
+
+<P>DISPDIB prevents other tasks from running while it is active.  This causes problems with some applications and with the high-level MCI multimedia APIs, which use a background task to function.  You can use the DISPDIB_DONTLOCKTASK flag (0x0200) to prevent DISPDIB from locking out background tasks, but you run the risk of another application gaining control.</P>
+
+<P>Documentation, sample code, and information about obtaining DISPDIB.DLL is available throught the Microsoft Developer Network, the MSDN CD, and Microsoft Developer Relations.</P>
+
+</BODY>
+</HTML>

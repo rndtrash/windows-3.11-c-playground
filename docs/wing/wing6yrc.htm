@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>WinGCreateHalftonePalette</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="Halftoning">
+	<PARAM NAME="Keyword" VALUE="Palette">
+	<PARAM NAME="Keyword" VALUE="WinGCreateHalftonePalette">
+</OBJECT>
+
+<P><A NAME="1o.g0y8"></A>WinGCreateHalftonePalette</P>
+
+<P>Creates an 8-bit palette used for halftoning images.</P>
+
+<P><A HREF="wing8g8p.htm"><B>HPALETTE</B></A> <B>WinGCreateHalftonePalette(void)</B></P>
+
+<P><B>Return Value</B></P>
+
+<P>Returns the handle of a <A HREF="wing5lo0.htm">logical palette</A> containing the colors of the WinG <A HREF="wing70th.htm">halftone palette</A> palette if successful. Otherwise, <B>WinGCreateHalftonePalette</B> returns 0.</P>
+
+<P><B>Comments</B></P>
+
+<P>The <A HREF="wing70th.htm">halftone palette</A> should be selected into any DC into which the application will use WinG to halftone.</P>
+
+<P>The WinG <A HREF="wing70th.htm">halftone palette</A> is an <A HREF="wing7bxq.htm">identity palette</A>: the logical palette indices and physical device indices are the same.</P>
+
+<P>The <A HREF="wing70th.htm">halftone palette</A> inverts correctly, so bitwise XORs invert colors properly.</P>
+
+<P>See the <A HREF="wing9dwz.htm">Using an Identity Palette</A> article for a discussion of identity palettes.</P>
+
+<P><B>Maximizing Performance</B></P>
+
+<P>Call <B>WinGCreateHalftonePalette</B> once at the beginning of your application. Select and realize the palette on <A HREF="wing8g8p.htm">WM_QUERYNEWPALETTE</A>, <A HREF="wing8g8p.htm">WM_PALETTECHANGED</A>, and <A HREF="wing8g8p.htm">WM_PAINT</A> messages.</P>
+
+<P><B>Example</B></P>
+
+<P>The <A HREF="wing42zs.htm">HALFTONE</A> sample application (in the SAMPLES\CUBE directory of the WinG Development Kit) uses the <A HREF="wing70th.htm">halftone palette</A> to dither 24-bit images to 8-bits using an 8x8 ordered dither.</P>
+
+<P><B>See Also</B></P>
+
+<P><A HREF="wing646m.htm">WinGCreateHalftoneBrush</A> <A HREF="wing4k9t.htm">WinGStretchBlt</A> <A HREF="wing7kaf.htm">WinGBitBlt</A> <A HREF="wing8g8p.htm">RealizePalette</A> <A HREF="wing8g8p.htm">WM_QUERYNEWPALETTE</A> <A HREF="wing8g8p.htm">WM_PALETTECHANGED</A> <A HREF="wing81uv.htm">Halftoning With WinG</A> <A HREF="wing9dwz.htm">Using an Identity Palette</A> <A HREF="wing4y0j.htm">Code Samples</A></P>
+
+</BODY>
+</HTML>

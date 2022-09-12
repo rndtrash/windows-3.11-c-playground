@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>Using GDI With WinGDCs</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="GDI">
+	<PARAM NAME="Keyword" VALUE="WinGDC">
+</OBJECT>
+
+<P><A NAME="y59ls6"></A>Mixing GDI and WinG</P>
+
+<P>There are two ways to use GDI and WinG together.  You can mix GDI and custom drawing operations into WinGBitmaps, and you can mix GDI operations and WinG blts to the screen.  Both have their caveats.</P>
+
+<P><B>Drawing into WinGBitmaps</B></P>
+
+<P>WinG allows drawing onto the DIB surface of a WinGDC with GDI, but there are some anomalies to keep in mind.</P>
+
+<P>1.Most importantly, GDI does NOT regard WinGDCs as palette devices. WinGDCs are actually 256-color RGB devices. You can modify the device color table using the <A HREF="wing47c8.htm">WinGSetDIBColorTable</A> API.  The <A HREF="wing7ui6.htm">Palette Animation With WinG</A> article describes how to match a given palette to a WinGDC color table.</P>
+
+<P>2.Drawing with GDI on a WinGDC surface does not always produce a pixel-perfect duplicate of the image you would see using GDI on a display device. The images will be acceptably similar, but some stray pixels will remain if you XOR the two images together.</P>
+
+<P>3.Brushes realized in a WinGDC will be aligned to the upper left corner of the WinGDC whereas brushes used in screen DCs are aligned to the upper left corner of the screen. This means that when you blt a WinGDC that has been filled with a pattern into a screen DC that has been filled with the same pattern, the patterns will not necessarily align correctly.</P>
+
+<P>If you have this problem, you can either change the brush origins and re-realize the brushes in either DC (see the section "1.6.8 Brush Alignment" in the Windows SDK Programmer's Reference Volume 1, also available on the Microsoft Developer Network CD) or you can make off-screen brushes align correctly with on-screen brushes by blting the WinGDC to a brush-aligned position on the screen. For example, an 8x8 brush pattern can be correctly aligned to the screen by blting the WinGDC to an x, y position when x and y are both multiples of 8.</P>
+
+<P>4.<A HREF="wing8g8p.htm">BitBlt</A> does not blt between DCs owned by different devices. You can't blt from a Printer DC to a Display DC, for example. A WinGDC is a new type of device context, and just as with other DCs, you can't use <A HREF="wing8g8p.htm">BitBlt</A> to blt between a WinGDC and any other type of DC (such as a WinGDC to a Display DC or a Memory DC to a WinGDC). To blt from a WinGDC to a DisplayDC, use <A HREF="wing7kaf.htm">WinGBitBlt</A> or <A HREF="wing4k9t.htm">WinGStretchBlt</A>. Again, you can't use <A HREF="wing8g8p.htm">BitBlt</A> to blt from a Display DC to a WinGDC on Windows 3.x or Win32s, and you can only use <A HREF="wing7kaf.htm">WinGBitBlt</A> or <A HREF="wing4k9t.htm">WinGStretchBlt</A> to blt from a WinGDC to the screen.</P>
+
+<P>To blt from the screen into a WinGDC on Windows 3.x you will need to create a compatible bitmap, <A HREF="wing8g8p.htm">BitBlt</A> the screen rectangle into this bitmap, then <A HREF="wing8g8p.htm">GetDIBits</A> from the bitmap into the WinGDC's DIB surface.  On Windows 95 and Windows NT 3.5, <A HREF="wing8g8p.htm">BitBlt</A> into a WinGDC will work properly.</P>
+
+<P>Win32 applications that use GDI and custom drawing routines to draw on the surface of a WinGBitmap should call <A HREF="wing81mh.htm">GDIFlush</A> after calling GDI functions and before calling custom functions. Win32 GDI batches drawing commands, including <A HREF="wing7kaf.htm">WinGBitBlt</A> and <A HREF="wing4k9t.htm">WinGStretchBlt</A>, and this will guarantee that all GDI drawing is completed before custom drawing begins. Without this call, drawing may be done in an incorrect order.</P>
+
+<P><B>Drawing to the Screen</B></P>
+
+<P>Win32 applications should call <A HREF="wing81mh.htm">GDIFlush</A> after blting to the screen from a WinGDC.</P>
+
+</BODY>
+</HTML>

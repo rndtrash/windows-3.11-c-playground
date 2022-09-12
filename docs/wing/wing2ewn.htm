@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>WinGGetDIBColorTable</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="Palette Animation">
+	<PARAM NAME="Keyword" VALUE="WinGGetDIBColorTable">
+</OBJECT>
+
+<P><A NAME="6t_ea7"></A>WinGGetDIBColorTable</P>
+
+<P>Returns the color table of the WinGBitmap currently selected into a WinGDC.</P>
+
+<P><B>UINT WinGGetDIBColorTable( HDC </B><I>hWinGDC</I><B>, UINT </B><I>StartIndex</I><B>, UINT </B><I>NumberOfEntries</I><B>, RGBQUAD far *</B><I>pColors</I><B> )</B></P>
+
+<P><B>Parameters</B></P>
+
+<TABLE cols=2 width=548>
+
+<TR VALIGN="top">
+<TD width=21%><I>hWinGDC</I></TD>
+<TD width=79%>Identifies the WinG device context whose color table should be retrieved.</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=21%><I>StartIndex</I></TD>
+<TD width=79%>Indicates the first palette entry to be retrieved.</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=21%><I>NumberOfEntries</I></TD>
+<TD width=79%>Indicates the number of palette entries to retrieve.</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=21%><I>pColors</I></TD>
+<TD width=79%>Points to a buffer which receives the requested color table entries.</TD>
+</TR>
+</TABLE><BR>
+
+<P><B>Return Value</B></P>
+
+<P>Returns the number of palette entries copied into the given buffer or 0 if it failed.</P>
+
+<P><B>Comments</B></P>
+
+<P>The <I>pColors</I> buffer must be at least large enough to hold <I>NumberOfEntries</I> RGBQUAD structures.</P>
+
+<P>Note that <I>StartIndex</I> indicates an entry in a palette array, which is zero-based. <I>NumberOfEntries</I> indicates a one-based count. If <I>NumberOfEntries</I> is zero, no color table entries will be retrieved.</P>
+
+<P><B>WinGGetDIBColorTable</B> will return 0 for WinGBitmaps with more than 8 bits per pixel.</P>
+
+<P><B>See Also</B></P>
+
+<P><A HREF="wing47c8.htm">WinGSetDIBColorTable</A> <A HREF="wing683a.htm">WinGCreateBitmap</A></P>
+
+</BODY>
+</HTML>

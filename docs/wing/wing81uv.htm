@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>Halftoning With WinG</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="Dithering">
+	<PARAM NAME="Keyword" VALUE="Halftone Palette">
+	<PARAM NAME="Keyword" VALUE="Halftoning">
+	<PARAM NAME="Keyword" VALUE="Palette">
+</OBJECT>
+
+<P><A NAME="halftoning"></A>Halftoning With WinG</P>
+
+<P>WinG allows applications to simulate true 24-bit color on 8-bit devices through the WinG halftoning support APIs, <A HREF="wing6yrc.htm">WinGCreateHalftonePalette</A> and <A HREF="wing646m.htm">WinGCreateHalftoneBrush</A>.</P>
+
+<P>The <A HREF="wing70th.htm">halftone palette</A> is an <A HREF="wing7bxq.htm">identity palette</A> containing a carefully selected ramp of colors optimized for dithering true color images to 8-bit devices. The <A HREF="wing6yrc.htm">WinGCreateHalftonePalette</A> function returns a handle to a <A HREF="wing70th.htm">halftone palette</A> which applications can select and realize into a display device context to take advantage of the halftoning capabilities offered by WinG.</P>
+
+<P>The brushes returned by the <A HREF="wing646m.htm">WinGCreateHalftoneBrush</A> API use patterns of colors in the halftone palette to create areas of simulated true color on 8-bit devices into which the halftone palette has been selected and realized. The <A HREF="wing15rr.htm">CUBE</A> sample application (in the SAMPLES\CUBE subdirectory of the WinG development kit) uses halftoned brushes to generate a wide range of shaded colors on an 8-bit display.</P>
+
+<P>The <A HREF="wing70th.htm">halftone palette</A> gives applications a framework for dithering 24-bit images to 8-bit devices. The palette itself is a slightly modified 2.6-bit-per-primary RGB cube, giving 216 halftoned values. The 256-color <A HREF="wing70th.htm">halftone palette</A> also contains the twenty <A HREF="wing7gja.htm">static colors</A> and a range of gray values.</P>
+
+<P>Given a 24-bit RGB color with 8 bits per primitive, you can find the index of the nearest color in the halftone palette using the following formula:</P>
+
+<P>HalftoneIndex = (Red / 51) + (Green / 51) * 6 + (Blue / 51) * 36;</P>
+
+<P>HalftoneColorIndex = aWinGHalftoneTranslation [HalftoneIndex];</P>
+
+<P>The aWinGHalftoneTranslation vector can be found in the <A HREF="wing42zs.htm">HALFTONE</A> source code. The <A HREF="wing42zs.htm">HALFTONE</A> sample (in the SAMPLES\HALFTONE subdirectory of the WinG development kit) applies an ordered 8x8 dither to a 24-bit image, converting it to an 8-bit DIB using the WinG Halftone Palette.</P>
+
+<P>Applications should avoid depending on a specific ordering of the <A HREF="wing70th.htm">halftone palette</A> by using <A HREF="wing8g8p.htm">PALETTERGB</A> instead of <A HREF="wing8g8p.htm">PALETTEINDEX</A> to refer to entries in the palette.</P>
+
+</BODY>
+</HTML>

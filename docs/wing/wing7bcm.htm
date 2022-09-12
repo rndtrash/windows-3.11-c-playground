@@ -1,0 +1,283 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>WinG readme.txt Release Notes</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="Bugs">
+	<PARAM NAME="Keyword" VALUE="Compatibility">
+	<PARAM NAME="Keyword" VALUE="Notes">
+	<PARAM NAME="Keyword" VALUE="readme.txt">
+	<PARAM NAME="Keyword" VALUE="Release Notes">
+</OBJECT>
+
+<P><A NAME="guc9qv"></A>WinG readme.txt Release Notes</P>
+
+<P>Microsoft WinG version 1.0</P>
+
+<P>--------------------------</P>
+
+<P>This file describes known bugs, gotchas, and helpful hints for the WinG</P>
+
+<P>Version 1.0 final release.</P>
+
+<P>ISVs may want to distribute portions of this readme file that describe</P>
+
+<P>configuration bugs along with shipping products that use WinG.</P>
+
+<P>WinG version 1.0 provides fast DIB-to-screen blts under Windows 3.1,</P>
+
+<P>Windows for Workgroups 3.11, Windows 95, and Windows NT version 3.5.</P>
+
+<P>WinG will not run on Windows NT version 3.1 or on earlier versions of</P>
+
+<P>Windows.</P>
+
+<P>WinG requires a 386 or better processor to run. WinG will not run on a</P>
+
+<P>286.</P>
+
+<P>If you have problems with WinG, please run the wingbug.exe file in</P>
+
+<P>the bin directory of the SDK and send the generated report to</P>
+
+<P>wingbug@microsoft.com.  Updated information on WinG is available</P>
+
+<P>on CompuServe in the WINMM forum and on ftp.microsoft.com.</P>
+
+<P>Known Bugs And Limitations</P>
+
+<P>--------------------------</P>
+
+<P>The following are known problems with or useful tidbits of information</P>
+
+<P>about WinG version 1.0.</P>
+
+<P>- On Windows 3.1, WinGBitmaps must be 8 bits per pixel and must be</P>
+
+<P>created with full 256 entry color tables.</P>
+
+<P>- WinGDCs are NOT palette devices. You must change their color tables</P>
+
+<P>using WinGSetDIBColorTable, not SelectPalette.</P>
+
+<P>- WinGBitBlt and WinGStretchBlt only support bltting from WinGDCs to the</P>
+
+<P>screen.</P>
+
+<P>- Using BitBlt and StretchBlt to blt from one WinGDC to</P>
+
+<P>another can be very slow when a clipping region has been</P>
+
+<P>selected into the destination.</P>
+
+<P>- WinGBitBlt and WinGStretchBlt may return different values than</P>
+
+<P>StretchDIBits for identical blts.</P>
+
+<P>- A few GDI APIs do not work correctly with WinGDCs:</P>
+
+<P>StretchDIBits will not blt 24bpp and 16bpp DIBs into an 8bpp WinGDC.</P>
+
+<P>FloodFill with a NULL brush draws incorrectly</P>
+
+<P>FloodFill outside of the bounds of a WinGBitmap can flood the</P>
+
+<P>entire image</P>
+
+<P>Brushes created with CreatePatternBrush with a WinGBitmap fault when</P>
+
+<P>selected into a WinGDC on Win3x - use CreateBitmap(8,8,1,8,0)</P>
+
+<P>DrawIcon will crash</P>
+
+<P>WinGBitBlt and WinGStretchBlt will not always blt to the correct</P>
+
+<P>location when you have changed the Viewport and/or Window origins</P>
+
+<P>using SetViewportOrg or SetWindowOrg.</P>
+
+<P>- You cannot change the origin of halftone brushes created by WinG.</P>
+
+<P>- Noticeable timing differences have been found while running the</P>
+
+<P>WinG profiler on a computer connected to a network. For accurate</P>
+
+<P>results, disconnect your computer from the network the first time you</P>
+
+<P>run a WinG application. After the profile is complete, you can plug the</P>
+
+<P>net in again. NOTE: Microsoft is not liable for any damage you may</P>
+
+<P>incur by incorrect handling of your computer hardware.</P>
+
+<P>- WinGBitBlt and WinGStretchBlt use a slightly different color matching</P>
+
+<P>algorithm than StretchDIBits when blting an 8-bit image to a 4-bit</P>
+
+<P>planar display such as a standard VGA. Mixing WinG and</P>
+
+<P>StretchDIBits on these displays may produce odd results.</P>
+
+<P>- WinG relies on the mmsystem timer drivers to determine display</P>
+
+<P>performance. If mmsystem.dll and timer.drv are not installed</P>
+
+<P>correctly, the results of the performance test may be incorrect.</P>
+
+<P>mmsystem.dll should appear on the drivers= line of the [boot]</P>
+
+<P>section of system.ini, and timer=timer.drv should appear in the</P>
+
+<P>[drivers] section of system.ini.</P>
+
+<P>- WinG version 1.0 does not yet use standard DCI because of time</P>
+
+<P>constraints.</P>
+
+<P>- "Just In Time" debuggers install a fault handler in a chain along</P>
+
+<P>with the WinG display performance profiler. If your debugger</P>
+
+<P>reports a fault during the WinG display performance test, pass the</P>
+
+<P>fault on to Windows instead of invoking your debugger.</P>
+
+<P>Driver-Specific Problems</P>
+
+<P>------------------------</P>
+
+<P>WinG depends on Windows display drivers written by independant</P>
+
+<P>hardware manufacturers for much of its speed. Bugs or performance</P>
+
+<P>problems in third-party display drivers may cause problems in WinG.</P>
+
+<P>In many cases, the video card manufacturer has already fixed the bug,</P>
+
+<P>and upgrading your display driver will often clear away problems.</P>
+
+<P>There are some specific "bugs" in display drivers of which you should</P>
+
+<P>be aware. The list below is not intended to slight the manufacturer</P>
+
+<P>of any particular card or driver.</P>
+
+<P>A list of stress-tested configurations is available on the CompuServe</P>
+
+<P>WINMM forum and ftp.microsoft.com.</P>
+
+<P>Some names in this list are trademarks of the respective</P>
+
+<P>manufacturer.</P>
+
+<P>- Early drivers for Diamond Viper cards included a "Power Palette"</P>
+
+<P>option that is no longer supported by Diamond. They recommend that</P>
+
+<P>you upgrade your drivers if you have this option. WinG may be</P>
+
+<P>slower when power palette is enabled.</P>
+
+<P>- IBM no longer supports the IBM ThinkPad 720c. There are some</P>
+
+<P>problems using WinG with the ThinkPad 720c display drivers.</P>
+
+<P>- Cirrus drivers before version 1.43 have many known bugs which</P>
+
+<P>have been fixed in the more recent drivers. Be sure to upgrade your</P>
+
+<P>drivers if you are still running with this version.</P>
+
+<P>- Some ATI drivers offer a "Crystal Fonts" option. Turning Crystal</P>
+
+<P>Fonts on in 8-bit modes sets up a non-palettized driver that can</P>
+
+<P>slow WinG significantly.</P>
+
+<P>- The ATI mach8 Radical drivers cause a number of problems in both</P>
+
+<P>WinG and in Windows with some versions of the ATI chipset. Be</P>
+
+<P>aware.</P>
+
+<P>- The ATI VGA Wonder drivers (W31-*.drv) will crash during a call to</P>
+
+<P>StretchDIBits in the profiler.  Users can run the SVGA256.DRV driver</P>
+
+<P>that shipped with Windows.</P>
+
+<P>- Many miro Crystal drivers have problems with StretchDIBits, so they</P>
+
+<P>crash during profiling.</P>
+
+<P>- Early ATI Mach 32 PCI cards have a hardware timing problem and will</P>
+
+<P>hang while blting.  ATI will replace these cards for no cost.</P>
+
+<P>- WinG is incompatible with the #9GXE "TurboCopy" mode.  Use the</P>
+
+<P>#9 control panel to disable TurboCopy (it is off by default).</P>
+
+<P></P>
+
+<P>- WinG uses a GetPixel to synchronize with display hardware when</P>
+
+<P>writing directly to the screen.  The ATI Mach 32 driver's GetPixel</P>
+
+<P>does not work properly, so it is possible to use GDI to draw to</P>
+
+<P>the screen, then use WinG to blt to the screen and have them overwrite</P>
+
+<P>each other.  Be careful mixing GDI drawing commands and WinG blts</P>
+
+<P>to the display.</P>
+
+<P>- The Orchid mmtllo.drv driver for the Prodesigner IIs has duplicate</P>
+
+<P>system colors which prevents applications from getting an identity</P>
+
+<P>palette and greatly reduces the WinG blt speed.  A workaround is</P>
+
+<P>to set SYSPAL_NOSTATIC mode or use standard the Tseng ET4000 drivers</P>
+
+<P>instead of the mmtllo drivers.</P>
+
+<P>A Note on Speed</P>
+
+<P>---------------</P>
+
+<P>WinG is designed to be the absolute fastest way to blt DIBs under</P>
+
+<P>Windows.  The goal, achieved in many cases, is to blt at memory</P>
+
+<P>bandwidth to the display device.</P>
+
+<P>On most 8bpp devices, if you use the recommended DIB format (returned</P>
+
+<P>by WinGRecommendDIBFormat) and set up correct identity palette, you</P>
+
+<P>should get 1:1 blt speeds comparable to BitBlt, which blts device</P>
+
+<P>dependent bitmaps (DDBs) to the display.  The timewing sample</P>
+
+<P>application will show you various blt speeds on your display.</P>
+
+<P>The WinGRecommendDIBFormat API will tell you whether to use top-down</P>
+
+<P>or bottom-up DIBs for fastest unclipped 1:1 identity palette blts. If</P>
+
+<P>you plan on using other types of blt (such as stretching or complex</P>
+
+<P>clipping), your application may want to time top-down versus</P>
+
+<P>bottom-up blts itself at run time. See the WinG help file for more</P>
+
+<P>information.</P>
+
+</BODY>
+</HTML>

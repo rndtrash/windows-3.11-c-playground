@@ -1,0 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>Balloon Doggie Sample</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="Dirty Rectangles">
+	<PARAM NAME="Keyword" VALUE="DOGGIE">
+	<PARAM NAME="Keyword" VALUE="Sample Code">
+	<PARAM NAME="Keyword" VALUE="TransparentDIBits">
+</OBJECT>
+
+<P><A NAME="2ih9obm"></A>Balloon Doggie Sample</P>
+
+<P>The Balloon Doggie sample application, found in the SAMPLES\DOGGIE subdirectory of the WinG development kit, demonstrates a simple dirty rectangle animation system. It creates a WinGDC and a WinGBitmap, which it uses as an <A HREF="wing6sha.htm">off-screen</A> buffer, and uses <A HREF="wing7kaf.htm">WinGBitBlt</A> to update the screen.</P>
+
+<P>Balloon Doggie includes source code for TransparentDIBits (in TBLT.C and FAST32.ASM), a fast DIB-to-DIB blt with transparency. TransparentDIBits demonstrates the use of custom drawing routines with WinG to provide functions not present or unacceptably slow in GDI.</P>
+
+<P>Note that DOGGIE.EXE requires MASM 5.1 compatibility to compile FAST32.ASM. If you do not own MASM 5.1, use MASM 6.x with the /Zm option or link to the precompiled FAST32.OBJ, included with the DOGGIE sample.</P>
+
+</BODY>
+</HTML>

@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>WinGStretchBlt</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="WinGStretchBlt">
+</OBJECT>
+
+<P><A NAME="19ic9ia"></A>WinGStretchBlt</P>
+
+<P>Copies an area from the source specified device context to an area of the destination device context, resizing if necessary to fill the destination rectangle. <B>WinGStretchBlt</B> is optimized to copy WinGDCs to display DCs. It does not operate on any other types of Device Contexts.</P>
+
+<P><B>BOOL</B> <B>WinGStretchBlt(HDC</B> <I>hdcDest</I><B>, int</B> <I>nXOriginDest</I><B>, int</B> <I>nYOriginDest</I><B>, int</B> <I>nWidthDest</I><B>, int</B> <I>nHeightDest</I><B>, HDC</B> <I>hdcSrc</I><B>, int</B> <I>nXOriginSrc</I><B>, int</B> <I>nYOriginSrc</I><B>, int</B> <I>nWidthSrc</I><B>, int</B> <I>nHeightSrc</I><B>)</B></P>
+
+<P><B>Parameters</B></P>
+
+<TABLE cols=2 width=548>
+
+<TR VALIGN="top">
+<TD width=19%><I>hdcDest</I></TD>
+<TD width=81%>Identifies the destination device context.</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=19%><I>nXOriginDest</I></TD>
+<TD width=81%>X coordinate of the upper-left corner of the destination rectangle in MM_TEXT client coordinates.</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=19%><I>nYOriginDest</I></TD>
+<TD width=81%>Y coordinate of the upper-left corner of the destination rectangle in MM_TEXT client coordinates.</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=19%><I>nWidthDest</I></TD>
+<TD width=81%>Width of the destination rectangle..</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=19%><I>nHeightDest</I></TD>
+<TD width=81%>Height of the destination rectangle..</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=19%><I>hdcSrc</I></TD>
+<TD width=81%>Identifies the source device context.</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=19%><I>nXOriginSrc</I></TD>
+<TD width=81%>X coordinate of the upper-left corner of the source rectangle in MM_TEXT client coordinates.</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=19%><I>nYOriginSrc</I></TD>
+<TD width=81%>Y coordinate of the upper-left corner of the source rectangle in MM_TEXT client coordinates.</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=19%><I>nWidthSrc</I></TD>
+<TD width=81%>Width of the source rectangle.</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=19%><I>nHeightSrc</I></TD>
+<TD width=81%>Height of the source rectangle.</TD>
+</TR>
+</TABLE><BR>
+
+<P><B>Return Value</B></P>
+
+<P>Returns non-zero if successful, otherwise returns zero.</P>
+
+<P><B>Comments</B></P>
+
+<P><B>WinGStretchBlt</B> requires both DCs to use <A HREF="wing8g8p.htm">MM_TEXT</A> mapping mode at the time of the call or the results may be unpredictable. At other times, any mapping mode may be used in either DC.</P>
+
+<P><B>WinGBitBlt</B> does not handle non-zero viewport or window origins set by <A HREF="wing8g8p.htm">SetViewportOrg</A> or <A HREF="wing8g8p.htm">SetWindowOrg</A>.</P>
+
+<P><B>WinGStretchBlt</B> uses the <A HREF="wing8g8p.htm">STRETCH_DELETESCANS</A> mode when expanding or shrinking an image.</P>
+
+<P><B>WinGStretchBlt</B> will fail under Windows 3.1 or Win32s if the source DC does not contain a monochrome or an 8-bit-per-pixel WinGBitmap.</P>
+
+<P>On Win32, calls to <B>WinGBStretchBlt</B> may be batched by the operating system. To ensure that a blt occurs immediately upon calling <B>WinGStretchBlt</B>, be sure to call <A HREF="wing81mh.htm">GDIFlush</A> just after every call to <B>WinGStretchBlt</B>.</P>
+
+<P><B>WinGStretchBlt only</B> copies from a WinGDC to a Display DC. To copy from a WinGDC to a WinGDC, use <A HREF="wing8g8p.htm">BitBlt</A>. You can not copy from a Display DC to a WinGDC.</P>
+
+<P><B>Maximizing Performance</B></P>
+
+<P>You will get the highest performance from <B>WinGStretchBlt</B> if you use a WinGBitmap created from header information supplied by a call to <A HREF="wing33hw.htm">WinGRecommendDIBFormat</A>.</P>
+
+<P><B>WinGStretchBlt</B> is optimized for copying WinGDCs to the screen.</P>
+
+<P>Aligning the destination rectangle to DWORD boundaries (4-pixel boundaries on an 8-bit display) can help <B>WinGStretchBlt</B> to achieve maximum speed.</P>
+
+<P>Stretching by integer ratios is faster than arbitrary ratios.  1 to 2 stretching is fastest.</P>
+
+<P>Clipping can slow <B>WinGStretchBlt</B> down. In general, don't select clipping regions into or blt outside the boundaries of the source or destination DCs and avoid blting to an overlapped window if possible.</P>
+
+<P><B>See Also</B></P>
+
+<P><A HREF="wing7kaf.htm">WinGBitBlt</A> <A HREF="wing414i.htm">WinGCreateDC</A> <A HREF="wing683a.htm">WinGCreateBitmap</A> <A HREF="wing33hw.htm">WinGRecommendDIBFormat</A> <A HREF="wing4tr9.htm">Maximizing Performance With WinG</A></P>
+
+</BODY>
+</HTML>

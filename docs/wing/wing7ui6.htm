@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>Palette Animation with WinG</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="Code Samples">
+	<PARAM NAME="Keyword" VALUE="Color Table">
+	<PARAM NAME="Keyword" VALUE="Logical Palette">
+	<PARAM NAME="Keyword" VALUE="Palette">
+	<PARAM NAME="Keyword" VALUE="Palette Animation">
+	<PARAM NAME="Keyword" VALUE="System Palette">
+</OBJECT>
+
+<P><A NAME="palette_animation"></A>Palette Animation With WinG</P>
+
+<P>Palette animation creates the appearance of motion in an image by modifying entries in the <A HREF="wing7fc4.htm">system palette</A>, resulting in color changes in the displayed image. Carefully arranged and animated palette entries can produce motion effects such as running water, flowing lava, or even motion of an object across the screen.</P>
+
+<P>The Windows <A HREF="wing8g8p.htm">AnimatePalette</A> function replaces entries in the <A HREF="wing5lo0.htm">logical palette</A> and the <A HREF="wing7fc4.htm">system palette</A>.  The app does not need to re-realize the palette after a call to <A HREF="wing8g8p.htm">AnimatePalette</A>.</P>
+
+<P>Because every DIB and WinGBitmap has an associated <A HREF="wing0yhv.htm">color table</A> which is translated to the system palette when the image is copied to the screen, DIBs blted after the palette is animated will not appear animated because their colors are translated to the new palette.</P>
+
+<P>The <A HREF="wing9dwz.htm">Using an Identity Palette</A> article discusses the creation of an <A HREF="wing7bxq.htm">identity palette</A> which removes the need for color translation when blting. If a palette animating application went through the trouble to create the <A HREF="wing7bxq.htm">identity palette</A>, it should maintain the identity mapping between the palette and the WinGDC by matching the WinGBitmap color table to the animated palette before blting. To do this, use <A HREF="wing47c8.htm">WinGSetDibColorTable</A> to keep the WinGBitmap color table synchronized with changes in the system palette.</P>
+
+<P>Remember that any entries in a palette which are to be animated must be marked with the <A HREF="wing8g8p.htm">PC_RESERVED</A> flag. <A HREF="wing8g8p.htm">PC_RESERVED</A> is a superset of <A HREF="wing8g8p.htm">PC_NOCOLLAPSE</A> flag, so these entries can be used in an <A HREF="wing7bxq.htm">identity palette</A>.</P>
+
+<P>The <A HREF="wing4i5q.htm">PALANIM</A> sample (in the SAMPLES\PALANIM subdirectory of the WinG development kit) performs a simple palette animation with an <A HREF="wing7bxq.htm">identity palette</A>, making sure to update the WinGDC <A HREF="wing0yhv.htm">color table</A> to match the palette before it blts using the following code, which copies the current <A HREF="wing5lo0.htm">logical palette</A> (hpalApp) into the <A HREF="wing0yhv.htm">color table</A> of the WinGDC (hdcOffscreen). Of course, if you create the palette yourself from an array of colors, there will be no need to call <A HREF="wing8g8p.htm">GetPaletteEntries</A> because you could update the color table from the array you already have in memory. Also, in a palette animation that does not animate the complete palette, an application would not need to modify the entire palette and color table, as this code snippet does:</P>
+
+<P>int i;</P>
+
+<P><A HREF="wing8g8p.htm">PALETTEENTRY</A> aPalette[256];</P>
+
+<P><A HREF="wing8g8p.htm">RGBQUAD</A> aPaletteRGB[256];</P>
+
+<P>//*** BEFORE BLTING, match the DIB <A HREF="wing0yhv.htm">color table</A> to the</P>
+
+<P>//*** current palette to match the animated palette</P>
+
+<P><A HREF="wing8g8p.htm">GetPaletteEntries</A>(hpalApp, 0, 256, aPalette);</P>
+
+<P>//*** Alas, palette entries are r-g-b, rgbquads are b-g-r</P>
+
+<P>for (i=0; i&lt;256; ++i)</P>
+
+<P>{</P>
+
+<P>aPaletteRGB[i].rgbRed = aPalette[i].peRed;</P>
+
+<P>aPaletteRGB[i].rgbGreen = aPalette[i].peGreen;</P>
+
+<P>aPaletteRGB[i].rgbBlue = aPalette[i].peBlue;</P>
+
+<P>aPaletteRGB[i].rgbReserved = 0;</P>
+
+<P>}</P>
+
+<P><A HREF="wing47c8.htm">WinGSetDIBColorTable</A>(hdcOffscreen, 0, 256, aPaletteRGB);</P>
+
+</BODY>
+</HTML>

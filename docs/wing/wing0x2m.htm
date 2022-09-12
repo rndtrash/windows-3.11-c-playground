@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>&lt;Copy MakeIdentityPalette Code to Clipboard&gt;</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<P><A NAME="21rt6a."></A>HPALETTE CreateIdentityPalette(RGBQUAD aRGB[], int nColors)</P>
+
+<P>{</P>
+
+<P>int i;</P>
+
+<P>struct {</P>
+
+<P>WORD Version;</P>
+
+<P>WORD NumberOfEntries;</P>
+
+<P>PALETTEENTRY aEntries[256];</P>
+
+<P>} Palette =</P>
+
+<P>{</P>
+
+<P>0x300,</P>
+
+<P>256</P>
+
+<P>};</P>
+
+<P>//*** Just use the screen DC where we need it</P>
+
+<P>HDC hdc = GetDC(NULL);</P>
+
+<P>//*** For SYSPAL_NOSTATIC, just copy the color table into</P>
+
+<P>//*** a PALETTEENTRY array and replace the first and last entries</P>
+
+<P>//*** with black and white</P>
+
+<P>if (GetSystemPaletteUse(hdc) == SYSPAL_NOSTATIC)</P>
+
+<P>{</P>
+
+<P>//*** Fill in the palette with the given values, marking each</P>
+
+<P>//*** as PC_NOCOLLAPSE</P>
+
+<P>for(i = 0; i &lt; nColors; i++)</P>
+
+<P>{</P>
+
+<P>Palette.aEntries[i].peRed = aRGB[i].rgbRed;</P>
+
+<P>Palette.aEntries[i].peGreen = aRGB[i].rgbGreen;</P>
+
+<P>Palette.aEntries[i].peBlue = aRGB[i].rgbBlue;</P>
+
+<P>Palette.aEntries[i].peFlags = PC_NOCOLLAPSE;</P>
+
+<P>}</P>
+
+<P>//*** Mark any unused entries PC_NOCOLLAPSE</P>
+
+<P>for (; i &lt; 256; ++i)</P>
+
+<P>{</P>
+
+<P>Palette.aEntries[i].peFlags = PC_NOCOLLAPSE;</P>
+
+<P>}</P>
+
+<P>//*** Make sure the last entry is white</P>
+
+<P>//*** This may replace an entry in the array!</P>
+
+<P>Palette.aEntries[255].peRed = 255;</P>
+
+<P>Palette.aEntries[255].peGreen = 255;</P>
+
+<P>Palette.aEntries[255].peBlue = 255;</P>
+
+<P>Palette.aEntries[255].peFlags = 0;</P>
+
+<P>//*** And the first is black</P>
+
+<P>//*** This may replace an entry in the array!</P>
+
+<P>Palette.aEntries[0].peRed = 0;</P>
+
+<P>Palette.aEntries[0].peGreen = 0;</P>
+
+<P>Palette.aEntries[0].peBlue = 0;</P>
+
+<P>Palette.aEntries[0].peFlags = 0;</P>
+
+<P>}</P>
+
+<P>else</P>
+
+<P>//*** For SYSPAL_STATIC, get the twenty static colors into</P>
+
+<P>//*** the array, then fill in the empty spaces with the</P>
+
+<P>//*** given color table</P>
+
+<P>{</P>
+
+<P>int nStaticColors;</P>
+
+<P>int nUsableColors;</P>
+
+<P>//*** Get the static colors from the system palette</P>
+
+<P>nStaticColors = GetDeviceCaps(hdc, NUMCOLORS);</P>
+
+<P>GetSystemPaletteEntries(hdc, 0, 256, Palette.aEntries);</P>
+
+<P>//*** Set the peFlags of the lower static colors to zero</P>
+
+<P>nStaticColors = nStaticColors / 2;</P>
+
+<P>for (i=0; i&lt;nStaticColors; i++)</P>
+
+<P>Palette.aEntries[i].peFlags = 0;</P>
+
+<P>//*** Fill in the entries from the given color table</P>
+
+<P>nUsableColors = nColors - nStaticColors;</P>
+
+<P>for (; i&lt;nUsableColors; i++)</P>
+
+<P>{</P>
+
+<P>Palette.aEntries[i].peRed = aRGB[i].rgbRed;</P>
+
+<P>Palette.aEntries[i].peGreen = aRGB[i].rgbGreen;</P>
+
+<P>Palette.aEntries[i].peBlue = aRGB[i].rgbBlue;</P>
+
+<P>Palette.aEntries[i].peFlags = PC_NOCOLLAPSE;</P>
+
+<P>}</P>
+
+<P>//*** Mark any empty entries as PC_NOCOLLAPSE</P>
+
+<P>for (; i&lt;256 - nStaticColors; i++)</P>
+
+<P>Palette.aEntries[i].peFlags = PC_NOCOLLAPSE;</P>
+
+<P>//*** Set the peFlags of the upper static colors to zero</P>
+
+<P>for (i = 256 - nStaticColors; i&lt;256; i++)</P>
+
+<P>Palette.aEntries[i].peFlags = 0;</P>
+
+<P>}</P>
+
+<P>//*** Remember to release the DC!</P>
+
+<P>ReleaseDC(NULL, hdc);</P>
+
+<P>//*** Return the palette</P>
+
+<P>return CreatePalette((LOGPALETTE *)&amp;Palette);</P>
+
+<P>}</P>
+
+</BODY>
+</HTML>

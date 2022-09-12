@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>Debugging WinG Applications</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="Borland">
+	<PARAM NAME="Keyword" VALUE="Debugging">
+	<PARAM NAME="Keyword" VALUE="Microsoft">
+	<PARAM NAME="Keyword" VALUE="Symantec">
+	<PARAM NAME="Keyword" VALUE="Watcom">
+</OBJECT>
+
+<P><A NAME="debugging"></A>Debugging WinG Applications</P>
+
+<P>WinG will report runtime errors and helpful debugging messages through standard Windows debug output devices (the serial port or applications such as DBWIN.EXE) if you so desire. If you want WinG to send error messages to the debug output, make sure the following entry appears in your WIN.INI file. If there is already a [WinG] section (there will be if WinG has previously profiled your display), just add the Debug=1 line under that heading:</P>
+
+<P>[WinG]</P>
+
+<P>Debug=1</P>
+
+<P>If you specifically do not want debug messages to appear, set this to:</P>
+
+<P>[WinG]</P>
+
+<P>Debug=0</P>
+
+<P>If neither debug level is specified in the [WinG] section of your WIN.INI file, debugging will be turned ON if you're using the Windows debug kernel and OFF if you're using the Windows retail kernel. Setting the Debug level explicitly in your WIN.INI will always override this default behavior.</P>
+
+<P>WinG can also provide you with a detailed log of palette translations between the <A HREF="wing0yhv.htm">color table</A> of a WinGBitmap and the <A HREF="wing5lo0.htm">logical palette</A> and <A HREF="wing7fc4.htm">system palette</A>. This will help to identify discrepancies in the palette which prevent WinG from using faster blts with an <A HREF="wing7bxq.htm">identity palette</A>. To receive these palette notifications through the debug output, add the following line to the [WinG] section of win.ini:</P>
+
+<P>DebugPalette = 1</P>
+
+<P>Debugging WinG applications is no different than debugging normal Windows applications, but there are some minor known problems and workarounds for the following debuggers:</P>
+
+<P>Borland Turbo Debugger</P>
+
+<P>There are known problems with debugging WinG applications using Turbo Debugger for Windows.  If you have problems debugging with TDW, try running one of the samples first and leave it minimized so that WinG.DLL will already be in memory when you debug your application. There seem to be no problems with the Borland IDE.</P>
+
+<P>Just-in-Time Debuggers</P>
+
+<P>When WinG profiles a display it installs a fault handler to catch any GP Faults caused by WinG or the display driver. Some Just-in-Time debuggers (like CodeView JIT) catch these faults before WinG and kill the profiling window, so WinG doesnt load. These faults should be passed to WinG so it can deal with them appropriately.  Either instruct your Just-in-Time debugger to chain the faults through to WinG, or do not run the debugger when WinG is profiling.  See <A HREF="wing1drb.htm">Display Profiling</A>.</P>
+
+</BODY>
+</HTML>

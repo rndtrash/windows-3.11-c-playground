@@ -32,7 +32,7 @@ Feel free to remove every `.o` file you see! Other unnecessary files are listed 
 
 ## What's in this repo
 
- 1. Open Watcom 2.0
+ 1. Open Watcom 2.0 with WinG
  2. QEMU
  3. DOSBox
 
@@ -41,6 +41,7 @@ Feel free to remove every `.o` file you see! Other unnecessary files are listed 
  1. MS-DOS 6.22
  2. Windows for Workgroups 3.11
  3. [vmwmouse](https://github.com/NattyNarwhal/vmwmouse) mouse driver
+ 4. [WinG](https://en.wikipedia.org/wiki/WinG) Runtime
 
 ## Known issues
 
@@ -50,4 +51,5 @@ It probably happens because of the mouse driver. Wait until the static no longer
 
 ## Documentation
 
-Knowledge base with the docs for old Windows API: [https://github.com/jeffpar/kbarchive](https://github.com/jeffpar/kbarchive)
+ * [WinG documentation](https://rndtrash.github.io/windows-3.11-c-playground/docs/wing/index.htm)
+ * Knowledge base with the docs for old Windows API: [https://github.com/jeffpar/kbarchive](https://github.com/jeffpar/kbarchive)

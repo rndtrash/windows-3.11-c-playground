@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>WinGCreateDC</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="WinGCreateDC">
+	<PARAM NAME="Keyword" VALUE="WinGDC">
+</OBJECT>
+
+<P><A NAME="w9a2h2"></A>WinGCreateDC</P>
+
+<P>Creates a WinG device context with the stock 1x1 monochrome bitmap selected.</P>
+
+<P><B>HDC</B> <B>WinGCreateDC(void)</B></P>
+
+<P><B>Return Value</B></P>
+
+<P>Returns the handle to a new WinGDC if successful. Otherwise, <B>WinGCreateDC</B> returns 0.</P>
+
+<P><B>Comments</B></P>
+
+<P>Device contexts created using <B>WinGCreateDC</B> must be deleted using the <A HREF="wing8g8p.htm">DeleteDC</A> function. All objects selected into the WinGDC after it was created should be selected out and replaced with the original objects before the device context is deleted.</P>
+
+<P>When a WinGDC is created, WinG automatically selects the stock 1x1 monochrome bitmap as its drawing surface. To begin drawing on the WinGDC, select a WinGBitmap created by the <A HREF="wing683a.htm">WinGCreateBitmap</A> function into the WinGDC.</P>
+
+<P><B>Maximizing Performance</B></P>
+
+<P><B>WinGCreateDC</B> has a fairly high overhead and is usually used to create a single off-screen DC. In general, programs will call <B>WinGCreateDC</B> once at startup then select new WinGBitmaps on <A HREF="wing8g8p.htm">WM_SIZE</A> messages to the double-buffered window. Applications can use the <A HREF="wing8g8p.htm">WM_GETMINMAXINFO</A> message to restrict the size of their window if necessary.</P>
+
+<P>Compose frames into WinGDCs, then use <A HREF="wing4k9t.htm">WinGStretchBlt</A> or <A HREF="wing7kaf.htm">WinGBitBlt</A><B> </B>to copy the WinGDC to the screen.</P>
+
+<P><B>Example</B></P>
+
+<P>See the <A HREF="wing683a.htm">WinGCreateBitmap</A> API for sample code that uses <B>WinGCreateDC</B>.</P>
+
+<P><B>See Also</B></P>
+
+<P><A HREF="wing683a.htm">WinGCreateBitmap</A> <A HREF="wing8g8p.htm">CreateDC</A> <A HREF="wing8g8p.htm">DeleteDC</A> <A HREF="wing8g8p.htm">WM_SIZE</A> <A HREF="wing8g8p.htm">WM_GETMINMAXINFO</A> <A HREF="wing4k9t.htm">WinGStretchBlt</A> <A HREF="wing7kaf.htm">WinGBitBlt</A> <A HREF="wing81mh.htm">CreateDIBSection</A> <A HREF="wing6sha.htm">Off-screen Drawing With WinG</A> <A HREF="wing4tr9.htm">Maximizing Performance With WinG</A> <A HREF="wing4y0j.htm">Code Samples</A></P>
+
+</BODY>
+</HTML>

@@ -111,7 +111,7 @@ foreach ($cppfile in $cppfiles)
 
 # Linking
 
-FailOnNonZeroExit("$watcom_bin/wlink FORMat WIndows LIBPath `"$watcom_root/lib386;$watcom_root/lib386;$watcom_root/lib286/win;$watcom_root/lib286`" Library windows FILE $($ofiles -join ",") Name $path/$project.exe")
+FailOnNonZeroExit("$watcom_bin/wlink FORMat WIndows LIBPath `"$watcom_root/lib386/win;$watcom_root/lib386;$watcom_root/lib286/win;$watcom_root/lib286`" Library windows FILE $($ofiles -join ",") Name $path/$project.exe")
 
 # Building resources
 

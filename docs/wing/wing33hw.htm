@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>WinGRecommendDIBFormat</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="WinGRecommendDIBFormat">
+</OBJECT>
+
+<P><A NAME="e5wwvt"></A>WinGRecommendDIBFormat</P>
+
+<P>Fills in the entries of a <A HREF="wing8g8p.htm">BITMAPINFO</A> structure with values that will give maximum performance for memory-to-screen 1:1 identity blts using WinG.</P>
+
+<P><B>BOOL WinGRecommendDIBFormat(BITMAPINFO far *</B><I>pHeader</I><B>)</B></P>
+
+<P><B>Parameters</B></P>
+
+<TABLE cols=2 width=548>
+
+<TR VALIGN="top">
+<TD width=16%><I>pHeader</I></TD>
+<TD width=84%>Points to a <A HREF="wing8g8p.htm">BITMAPINFO</A> structure to receive the recommended DIB format.</TD>
+</TR>
+</TABLE><BR>
+
+<P><B>Return Value</B></P>
+
+<P>Returns non-zero if successful. Otherwise, returns zero.</P>
+
+<P><B>Comments</B></P>
+
+<P><I>pHeader</I> must point to enough memory to hold a <A HREF="wing8g8p.htm">BITMAPINFOHEADER</A> and 3 DWORDs for <A HREF="wing81mh.htm">BI_BITFIELDS</A>. <B>WinGRecommendDIBFormat</B> will not return a color table.</P>
+
+<P>For any combination of hardware and software, there will be one DIB format that WinG can copy fastest from memory to the screen. <B>WinGRecommendDIBFormat</B> returns the optimal format for blting DIBs with no stretching and no complex clipping using an identity palette. If your application makes heavy use of another blt type (such as 1:2 stretching or complex clipping regions), you may want to perform top-down and bottom-up timing comparisons yourself at run-time to determine the most efficient method for your needs.</P>
+
+<P>In many cases, WinG will find that it can copy a DIB to the screen faster if the DIB is in <A HREF="wing7jfs.htm">top-down</A> format rather than the usual <A HREF="wing8zq9.htm">bottom-up</A> format. <B>WinGRecommendDIBFormat</B> will set the biHeight entry of the <A HREF="wing8g8p.htm">BITMAPINFOHEADER</A> structure to -1 if this is the case, otherwise biHeight will be set to 1. See the <A HREF="wing7sxa.htm">DIB Orientation</A> article for more information about these special DIBs.</P>
+
+<P>Code that uses <B>WinGRecommendDIBFormat</B> should never assume that it will recommend an 8-bit format, as this may change depending on the run-time platform.</P>
+
+<P><B>Example</B></P>
+
+<P>See the <A HREF="wing683a.htm">WinGCreateBitmap</A> API for sample code that uses <B>WinGRecommendDIBFormat</B>.</P>
+
+<P><B>See Also</B></P>
+
+<P><A HREF="wing683a.htm">WinGCreateBitmap</A> <A HREF="wing8g8p.htm">BITMAPINFO</A> <A HREF="wing8g8p.htm">BITMAPINFOHEADER</A> <A HREF="wing4y0j.htm">Code Samples</A></P>
+
+</BODY>
+</HTML>

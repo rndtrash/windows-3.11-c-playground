@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>Shipping a Product With WinG</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="Display Performance Test">
+	<PARAM NAME="Keyword" VALUE="Profiler">
+	<PARAM NAME="Keyword" VALUE="Shipping">
+</OBJECT>
+
+<P><A NAME="shipping"></A>Shipping a Product With WinG</P>
+
+<P>Microsoft grants you the royalty-free right to distribute any application you create using WinG, along with the WinG runtime support files listed below.</P>
+
+<P>If your application uses WinG and the WinG runtime files are not present in the \SYSTEM subdirectory of the target system's Windows directory, your setup program will have to install the WinG runtime. The following files should be installed in the user's SYSTEM directory:</P>
+
+<P>WING.DLL</P>
+
+<P>WING32.DLL</P>
+
+<P>WINGDE.DLL</P>
+
+<P>WINGDIB.DRV</P>
+
+<P>WINGPAL.WND</P>
+
+<P>DVA.386</P>
+
+<P>If DVA.386 was not previously installed on the user's system (for example, by Video for Windows), your setup program should add the following line to the [386Enh] section of the SYSTEM.INI file, after which the user must reboot Windows for optimal WinG performance:</P>
+
+<P>device=dva.386</P>
+
+<P>This file must be installed properly as shown in the WING.MST setup script or Windows will not boot.</P>
+
+<P><B>Setup Toolkit</B></P>
+
+<P>The Windows Software Development Kit includes the Setup Toolkit for Windows, which allows you to create and run setup scripts for installing Windows applications. Documentation for the toolkit comes with the Windows SDK and is also available through the Microsoft Developer Relations Group and the Microsoft Developer Network CD.</P>
+
+<P>The WinG Development Kit setup program installs the WinG runtime files using Microsoft setup exactly as they should be installed on a target user's system. Look at the WING.MST script on the WinG installation diskette to see how this is done. WING.MST calls SETUPHLP.DLL to aid in installing the runtime files.  You can use this DLL in your own application setup.  SETUPHLP.DLL will version check Win32 DLLs (for installing WinG32.DLL) and check for the presence of dva.386, among other things.</P>
+
+<P><B>Customizing the WinG Profiler</B></P>
+
+<P>The first time a WinG application runs in a new video mode or after a new display driver has been installed, WinG performs a performance test to determine the fastest way to blt a WinGBitmap to the display. The user will only see this performance test once for any given video mode, but on slower machines the test may last several minutes.</P>
+
+<P>By default, the profiling window displays a message to the user that says "Your program is testing for optimal display performance so that it will look its best on your system. This will take a few minutes, but you will only see it again if you change to new display settings." However, you might want WinG to display something more informative or specific to your application. You can customize this message by placing a ProfileMessage= entry in the [WinG] section of the user's WIN.INI file. For example:</P>
+
+<P>[WinG]</P>
+
+<P>ProfileMessage=Hold on to your seats! WindowsSuperApp is turbo-charging your display!</P>
+
+<P>Your custom profile message must be 255 characters or less, and you must place it in WIN.INI immediately before WinG loads. After loading, WinG deletes this entry to avoid conflicts with other WinG applications.</P>
+
+<P>If you choose to provide a custom profile message, your application will have to change the ProfileMessage entry before WinG loads, either by a separate loader application that sets the entry and runs your application using <A HREF="wing8g8p.htm">WinExec</A> or by setting the ProfileMessage entry and dynamically loading WinG using <A HREF="wing8g8p.htm">LoadLibrary</A>.</P>
+
+</BODY>
+</HTML>

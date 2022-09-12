@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>Off-screen Drawing With WinG</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="Dirty Rectangle Animation">
+	<PARAM NAME="Keyword" VALUE="Double Buffering">
+	<PARAM NAME="Keyword" VALUE="WinGDC">
+</OBJECT>
+
+<P><A NAME="offscreen"></A>Off-screen Drawing With WinG</P>
+
+<P>WinG introduces a new type of device context, the WinGDC, that can be used like any other device context. Unlike other DCs, programmers can retrieve a pointer directly to the WinGDC drawing surface, its <A HREF="wing8g8p.htm">BITMAPINFOHEADER</A>, and its color table. They can also create and select new drawing surfaces for the WinGDC or modify the color table of an existing surface. DIBs become as easy to use as device-specific bitmaps and compatible DCs, and programmers can also draw into them using their own routines.</P>
+
+<P>Most often, applications will use <A HREF="wing414i.htm">WinGCreateDC</A> to create a single WinGDC and will use <A HREF="wing683a.htm">WinGCreateBitmap</A> to create one or more WinGBitmaps into which they compose an image. The application will typically draw into this buffer using DIB copy operations, GDI calls, WinG calls, and custom drawing routines, as shown here.</P>
+
+<P><B><IMG SRC="bm0.gif" ALT="" BORDER=0></B></P>
+
+<P><B>A double-buffering architecture for WinG</B></P>
+
+<P>Once drawing, DIB composition, and sprite composition for the current frame is complete, the application will copy the WinGDC buffer to the screen using <A HREF="wing4k9t.htm">WinGStretchBlt</A> or <A HREF="wing7kaf.htm">WinGBitBlt</A>. This double-buffering architecture minimizes flicker and provides smooth screen updates.</P>
+
+<P>Many games and animation applications draw their characters using sprites. On arcade machines, sprite operations are performed in hardware. Under DOS with a VGA, games simulate sprite hardware using transparent blts into an off-screen buffer. The <A HREF="wing394d.htm">DOGGIE</A> sample application (in the SAMPLES\DOGGIE directory of the WinG development kit) uses WinG in the same way to perform transparent blts to a WinGDC and includes source code for an 8-bit to 8-bit TransparentDIBits procedure.</P>
+
+</BODY>
+</HTML>

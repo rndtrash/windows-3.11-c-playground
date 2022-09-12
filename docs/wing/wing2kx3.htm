@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>Why WinG?</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="Why">
+	<PARAM NAME="Keyword" VALUE="WinG">
+</OBJECT>
+
+<P><A NAME="why_wing"></A>Why WinG?</P>
+
+<P>Although business applications such as word processors and spreadsheets have moved almost exclusively to Windows, DOS remains the operating system of choice for high-volume, high-performance action games and innovative graphics applications for PCs. These applications have not made the transition to Windows because of restrictions placed on the programmer by GDI's device independence, by the windowed environment, and by the inability of general graphics libraries to provide the necessary speed.</P>
+
+<P>The display techniques used by high-performance graphics applications have two common characteristics. First, the application hides the frame composition process by <A HREF="wing6sha.htm">double-buffering</A> in software or hardware. Second, programmers use knowledge specific to the problem at hand to optimize their graphics routines in ways a general graphics library can not.</P>
+
+<P>Hiding frame composition eliminates flicker by presenting only completed frames to the user. Under DOS, a VGA card can accomplish the display in hardware by page flipping, or the buffer can reside in main memory which is copied to the screen. Some applications further optimize display access by copying only the areas of the buffer that have changed since the last frame, a process called <A HREF="wing91fa.htm">dirty rectangle</A> animation. Today, high-performance DOS games use all of these techniques.</P>
+
+<P>In short, most DOS games programmers use knowledge specific to their application and their hardware to write optimized graphics routines. Until now, Windows programmers could not use such methods because GDI prevents access to device-specific surfaces; programmers can not draw directly onto the surface of a GDI device context.</P>
+
+<P>WinG (pronounced "Win Gee") is an optimized library designed to enable these high-performance graphics techniques under Windows 3.x, Win32s, Windows NT 3.5, Windows 95, and future Windows releases. WinG allows the programmer to create a GDI-compatible <A HREF="wing8g8p.htm">HBITMAP</A> with a Device Independent Bitmap (DIB) as the drawing surface. Programmers can use GDI or their own code to draw onto this bitmap, then use WinG to transfer it quickly to the screen. WinG also provides <A HREF="wing81uv.htm">halftoning</A> APIs that use the standard Microsoft halftone palette to support simulation of true color on palette devices.</P>
+
+</BODY>
+</HTML>

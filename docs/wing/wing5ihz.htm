@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>Compiling 32-bit WinG Applications for Windows 3.1</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="Borland">
+	<PARAM NAME="Keyword" VALUE="Microsoft">
+	<PARAM NAME="Keyword" VALUE="Symantec">
+	<PARAM NAME="Keyword" VALUE="Watcom">
+	<PARAM NAME="Keyword" VALUE="Win32s">
+</OBJECT>
+
+<P><A NAME="compiling"></A>Compiling WinG Applications</P>
+
+<P>WinG.DLL is a standard 16 bit DLL with PASCAL calling convention exports; WinG32.DLL is a standard Win32 DLL with _stdcall exports. You should be able to write WinG applications with any compiler in any language that can generate Windows 16 bit or Win32 executables that call DLLs.</P>
+
+<P><B>16 bit Applications</B></P>
+
+<P>Most 16 bit Windows compilers and linkers are standardized, so you should have no trouble linking to the wing.lib file provided in the WinG SDK.  If you do have trouble, try using your compilers import librarian if possible, import the WinG functions directly in your .def file or its equivalent, or dynamically link to WinG.DLL using <A HREF="wing8g8p.htm">LoadLibrary</A> and <A HREF="wing8g8p.htm">GetProcAddress</A>.</P>
+
+<P><B>32 bit Applications</B></P>
+
+<P>Compiling and linking for Win32 can be tricky with some compilers. Several major compilers require various incantations to successfully build a Win32 application. Hopefully, the following hints will aid in the successful compilation and linking of WinG applications using these compilers.</P>
+
+<P>The WinG32.lib file in the WinG SDK is a Common Object File Format (COFF) library file.  Most non-Microsoft Win32 compilers support only Object-Module Format (OMF) library files, so you may have problems linking to WinG32 functions.  If you encounter link problems, first see if your compiler has an "import librarian," a program that creates a library file from a DLL.  Run this program on WinG32.dll and try linking with the generated library file.  If this doesn't work or you don't have an import librarian, try explicitly importing the functions in your .def file.  As a last resort you can dynamically link to WinG32 using <A HREF="wing8g8p.htm">LoadLibrary</A> and <A HREF="wing8g8p.htm">GetProcAddress</A>.</P>
+
+<P>Borland</P>
+
+<P>Run implib on WinG32.dll or modify the .def file.</P>
+
+<P>Symantec</P>
+
+<P>Run implib on WinG32.dll or modify the .def file.</P>
+
+<P>Watcom</P>
+
+<P>The Watcom linker will have trouble linking to the wing32.lib export file included with the WinG Development Kit. This export file lists undecorated names, using the conventions established for Alpha, MIPS, and x86 cross-assembly. To create a new wing32.lib file linkable with the Watcom tools, run wlib on win32.dll as follows:</P>
+
+<P>wlib wing32 @wing32.lbc</P>
+
+<P>where wing32.lbc is a text file containing the following description of the WinG functions:</P>
+
+<P>++'_WinGBitBlt'.'WING32.DLL'..WinGBitBlt</P>
+
+<P>++'_WinGCreateBitmap'.'WING32.DLL'..WinGCreateBitmap</P>
+
+<P>++'_WinGCreateDC'.'WING32.DLL'..WinGCreateDC</P>
+
+<P>++'_WinGCreateHalftoneBrush'.'WING32.DLL'..WinGCreateHalftoneBrush</P>
+
+<P>++'_WinGCreateHalftonePalette'.'WING32.DLL'..WinGCreateHalftonePalette</P>
+
+<P>++'_WinGGetDIBColorTable'.'WING32.DLL'..WinGGetDIBColorTable</P>
+
+<P>++'_WinGGetDIBPointer'.'WING32.DLL'..WinGGetDIBPointer</P>
+
+<P>++'_WinGRecommendDIBFormat'.'WING32.DLL'..WinGRecommendDIBFormat</P>
+
+<P>++'_WinGSetDIBColorTable'.'WING32.DLL'..WinGSetDIBColorTable</P>
+
+<P>++'_WinGStretchBlt'.'WING32.DLL'..WinGStretchBlt</P>
+
+</BODY>
+</HTML>

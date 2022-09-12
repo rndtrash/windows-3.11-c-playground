@@ -1,0 +1,282 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>Accessing a Full Palette Using SYSPAL_NOSTATIC</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="AppActivate">
+	<PARAM NAME="Keyword" VALUE="Code Samples">
+	<PARAM NAME="Keyword" VALUE="Palette">
+	<PARAM NAME="Keyword" VALUE="Static Colors">
+	<PARAM NAME="Keyword" VALUE="SYSPAL_NOSTATIC">
+	<PARAM NAME="Keyword" VALUE="SYSPAL_STATIC">
+	<PARAM NAME="Keyword" VALUE="System Colors">
+	<PARAM NAME="Keyword" VALUE="System Palette">
+</OBJECT>
+
+<P><A NAME="dua4cp"></A>Accessing a Full Palette Using <A HREF="wing8g8p.htm">SYSPAL_NOSTATIC</A></P>
+
+<P>The Palette Manager usually reserves twenty <A HREF="wing7gja.htm">static colors</A> in the palette for use in drawing captions, menus, text, scroll bars, window frames, and other system elements. These <A HREF="wing7gja.htm">static colors</A> ensure a common color scheme across all applications, but this leaves only 236 palette entries available to each application. A Windows graphics application requiring a full palette of 256 colors has two options, outlined here.</P>
+
+<P>The first option is to incorporate the <A HREF="wing7gja.htm">static colors</A> into the palette at runtime, knowing that the RGB values of the colors may change slightly from display driver to display driver. This means that the palette will vary slightly when the application runs on different platforms, but it ensures the consistent look and feel between the application and coexisting applications in the system.</P>
+
+<P>The static colors are defined as follows:</P>
+
+<TABLE cols=4 width=491>
+
+<TR VALIGN="top">
+<TD width=10%><U>Index</U></TD>
+<TD width=39%>Color</TD>
+<TD width=11%>Index</TD>
+<TD width=40%>Color</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=10%>0</TD>
+<TD width=39%>Black</TD>
+<TD width=11%>246</TD>
+<TD width=40%>Cream</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=10%>1</TD>
+<TD width=39%>Dark Red</TD>
+<TD width=11%>247</TD>
+<TD width=40%>Light Gray</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=10%>2</TD>
+<TD width=39%>Dark Green</TD>
+<TD width=11%>248</TD>
+<TD width=40%>Medium Gray</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=10%>3</TD>
+<TD width=39%>Dark Yellow</TD>
+<TD width=11%>249</TD>
+<TD width=40%>Red</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=10%>4</TD>
+<TD width=39%>Dark Blue</TD>
+<TD width=11%>250</TD>
+<TD width=40%>Green</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=10%>5</TD>
+<TD width=39%>Dark Magenta</TD>
+<TD width=11%>251</TD>
+<TD width=40%>Yellow</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=10%>6</TD>
+<TD width=39%>Dark Cyan</TD>
+<TD width=11%>252</TD>
+<TD width=40%>Blue</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=10%>7</TD>
+<TD width=39%>Light Gray</TD>
+<TD width=11%>253</TD>
+<TD width=40%>Magenta</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=10%>8</TD>
+<TD width=39%>Money Green</TD>
+<TD width=11%>254</TD>
+<TD width=40%>Cyan</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=10%>9</TD>
+<TD width=39%>Sky Blue</TD>
+<TD width=11%>255</TD>
+<TD width=40%>White</TD>
+</TR>
+</TABLE><BR>
+
+<P>If you can accept the limitation of including these colors in your palette and determining their exact RGB values at runtime (using <A HREF="wing8g8p.htm">GetSystemPaletteEntries</A>), you can skip the rest of this article.</P>
+
+<P>The second option is to tell the Palette Manager to make 18 of the twenty <A HREF="wing7gja.htm">static colors</A> available to the application, with entry 0 remaining black and entry 255 remaining white. However, choosing to control those palette entries means you'll have some more intimate relations with the Palette Manager.</P>
+
+<P>To change the use of the <A HREF="wing7gja.htm">static colors</A> in the <A HREF="wing7fc4.htm">system palette</A>, you use the <A HREF="wing8g8p.htm">SetSystemPaletteUse</A> API, passing either <A HREF="wing8g8p.htm">SYSPAL_STATIC</A> or <A HREF="wing8g8p.htm">SYSPAL_NOSTATIC</A>. Setting the palette use to <A HREF="wing8g8p.htm">SYSPAL_NOSTATIC</A> gives you access to palette entries 1 through 254. Your palette must map entry 0 to RGB(0, 0, 0) and entry 255 to RGB(255, 255, 255), but black and white are standard in most palettes anyway.</P>
+
+<P>Ordinarily, Windows uses entries 0-9 and 246-255 to draw captions, borders, menus, and text, and it will continue to do so after you've changed the RGB values of those palette entries unless you tell it to do otherwise. If you do not inform the operating system of your changes, your application and all others in the system will become very messy and your application will be condemned by its peers as unfriendly.</P>
+
+<P>You want your application to be friendly to the operating system and to the other active applications. You can handle this in two ways: you can make your application a full-screen window with no controls, thereby taking over the entire screen and the full palette, or you can tell the operating system to use different palette entries to draw its captions, borders, menus, and text so that other visible windows do not appear completely strange. In either case, you must restore the <A HREF="wing7gja.htm">static colors</A> when your application becomes inactive or exits.</P>
+
+<P>The following procedure handles the switch between <A HREF="wing8g8p.htm">SYSPAL_STATIC</A> and <A HREF="wing8g8p.htm">SYSPAL_NOSTATIC</A> for you, managing the mapping and remapping of the <A HREF="wing26jt.htm">system colors</A> for you through the Windows functions <A HREF="wing8g8p.htm">GetSysColor</A> and <A HREF="wing8g8p.htm">SetSysColors</A>. It stores the current mapping of the <A HREF="wing26jt.htm">system colors</A> before switching to <A HREF="wing8g8p.htm">SYSPAL_NOSTATIC</A> mode and restores them after switching back to <A HREF="wing8g8p.htm">SYSPAL_STATIC</A> mode.</P>
+
+<P>To use the AppActivate() function in an application, call AppActivate((BOOL)wParam) in response to a <A HREF="wing8g8p.htm">WM_ACTIVATEAPP</A> message and call AppActivate(FALSE) before exiting to restore the system colors. This will set the <A HREF="wing7fc4.htm">system palette</A> use and remap the <A HREF="wing26jt.htm">system colors</A> when your application is activated or deactivated.</P>
+
+<P>The <A HREF="wing4i5q.htm">PALANIM</A> sample (in the SAMPLES\PALANIM subdirectory of the WinG development kit) uses this function to take over the <A HREF="wing7gja.htm">static colors</A> at run time and clean up before it exits.</P>
+
+<P><A HREF="wing0bou.htm">Click Here</A> to copy this code sample to the clipboard.</P>
+
+<P>#define NumSysColors (sizeof(SysPalIndex)/sizeof(SysPalIndex[1]))</P>
+
+<P>#define rgbBlack RGB(0,0,0)</P>
+
+<P>#define rgbWhite RGB(255,255,255)</P>
+
+<P>//*** These are the <A HREF="wing8g8p.htm">GetSysColor</A> display element identifiers</P>
+
+<P>static int SysPalIndex[] = {</P>
+
+<P><A HREF="wing8g8p.htm">COLOR_ACTIVEBORDER</A>,</P>
+
+<P><A HREF="wing8g8p.htm">COLOR_ACTIVECAPTION</A>,</P>
+
+<P><A HREF="wing8g8p.htm">COLOR_APPWORKSPACE</A>,</P>
+
+<P><A HREF="wing8g8p.htm">COLOR_BACKGROUND</A>,</P>
+
+<P><A HREF="wing8g8p.htm">COLOR_BTNFACE</A>,</P>
+
+<P><A HREF="wing8g8p.htm">COLOR_BTNSHADOW</A>,</P>
+
+<P><A HREF="wing8g8p.htm">COLOR_BTNTEXT</A>,</P>
+
+<P><A HREF="wing8g8p.htm">COLOR_CAPTIONTEXT</A>,</P>
+
+<P><A HREF="wing8g8p.htm">COLOR_GRAYTEXT</A>,</P>
+
+<P><A HREF="wing8g8p.htm">COLOR_HIGHLIGHT</A>,</P>
+
+<P><A HREF="wing8g8p.htm">COLOR_HIGHLIGHTTEXT</A>,</P>
+
+<P><A HREF="wing8g8p.htm">COLOR_INACTIVEBORDER</A>,</P>
+
+<P><A HREF="wing8g8p.htm">COLOR_INACTIVECAPTION</A>,</P>
+
+<P><A HREF="wing8g8p.htm">COLOR_MENU</A>,</P>
+
+<P><A HREF="wing8g8p.htm">COLOR_MENUTEXT</A>,</P>
+
+<P><A HREF="wing8g8p.htm">COLOR_SCROLLBAR</A>,</P>
+
+<P><A HREF="wing8g8p.htm">COLOR_WINDOW</A>,</P>
+
+<P><A HREF="wing8g8p.htm">COLOR_WINDOWFRAME</A>,</P>
+
+<P><A HREF="wing8g8p.htm">COLOR_WINDOWTEXT</A></P>
+
+<P>};</P>
+
+<P>//*** This array translates the display elements to black and white</P>
+
+<P>static <A HREF="wing8g8p.htm">COLORREF</A> MonoColors[] = {</P>
+
+<P>rgbBlack,</P>
+
+<P>rgbWhite,</P>
+
+<P>rgbWhite,</P>
+
+<P>rgbWhite,</P>
+
+<P>rgbWhite,</P>
+
+<P>rgbBlack,</P>
+
+<P>rgbBlack,</P>
+
+<P>rgbBlack,</P>
+
+<P>rgbBlack,</P>
+
+<P>rgbBlack,</P>
+
+<P>rgbWhite,</P>
+
+<P>rgbWhite,</P>
+
+<P>rgbWhite,</P>
+
+<P>rgbWhite,</P>
+
+<P>rgbBlack,</P>
+
+<P>rgbWhite,</P>
+
+<P>rgbWhite,</P>
+
+<P>rgbBlack,</P>
+
+<P>rgbBlack</P>
+
+<P>};</P>
+
+<P>//*** This array holds the old color mapping so we can restore them</P>
+
+<P>static <A HREF="wing8g8p.htm">COLORREF</A> OldColors[NumSysColors];</P>
+
+<P>//*** AppActivate sets the <A HREF="wing7fc4.htm">system palette</A> use and</P>
+
+<P>//*** remaps the <A HREF="wing26jt.htm">system colors</A> accordingly.</P>
+
+<P>void AppActivate(BOOL fActive)</P>
+
+<P>{</P>
+
+<P><A HREF="wing8g8p.htm">HDC</A> hdc;</P>
+
+<P>int i;</P>
+
+<P>//*** Just use the screen DC</P>
+
+<P>hdc = <A HREF="wing8g8p.htm">GetDC</A>(NULL);</P>
+
+<P>//*** If the app is activating, save the current color mapping</P>
+
+<P>//*** and switch to <A HREF="wing8g8p.htm">SYSPAL_NOSTATIC</A></P>
+
+<P>if (fActive &amp;&amp; <A HREF="wing8g8p.htm">GetSystemPaletteUse</A>(hdc) == <A HREF="wing8g8p.htm">SYSPAL_STATIC</A>)</P>
+
+<P>{</P>
+
+<P>//*** Store the current mapping</P>
+
+<P>for (i=0; i&lt;NumSysColors; i++)</P>
+
+<P>OldColors[i] = <A HREF="wing8g8p.htm">GetSysColor</A>(SysPalIndex[i]);</P>
+
+<P>//*** Switch to <A HREF="wing8g8p.htm">SYSPAL_NOSTATIC</A> and remap the colors</P>
+
+<P><A HREF="wing8g8p.htm">SetSystemPaletteUse</A>(hdc, SYSPAL_NOSTATIC);</P>
+
+<P><A HREF="wing8g8p.htm">SetSysColors</A>(NumSysColors, SysPalIndex, MonoColors);</P>
+
+<P>}</P>
+
+<P>else if (!fActive)</P>
+
+<P>{</P>
+
+<P>//*** Switch back to <A HREF="wing8g8p.htm">SYSPAL_STATIC</A> and the old mapping</P>
+
+<P><A HREF="wing8g8p.htm">SetSystemPaletteUse</A>(hdc, SYSPAL_STATIC);</P>
+
+<P><A HREF="wing8g8p.htm">SetSysColors</A>(NumSysColors, SysPalIndex, OldColors);</P>
+
+<P>}</P>
+
+<P>//*** Be sure to release the DC!</P>
+
+<P><A HREF="wing8g8p.htm">ReleaseDC</A>(NULL,hdc);</P>
+
+<P>}</P>
+
+</BODY>
+</HTML>

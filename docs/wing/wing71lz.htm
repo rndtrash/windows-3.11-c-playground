@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>WinG Timing Sample</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="Sample Code">
+	<PARAM NAME="Keyword" VALUE="TIMEWING">
+	<PARAM NAME="Keyword" VALUE="Timing">
+</OBJECT>
+
+<P><A NAME="1plf8g"></A>WinG Timing Sample</P>
+
+<P>The timing sample, TIMEWING.EXE, found in the SAMPLES\TIMEWING subdirectory of the WinG development kit, times and compares the blt and stretching speeds of <A HREF="wing8g8p.htm">StretchBlt</A>, <A HREF="wing8g8p.htm">StretchDIBits</A>, and <A HREF="wing4k9t.htm">WinGStretchBlt</A>. The application provides a summary you can use to compare the speeds of these techniques on various video configurations and a framework you can use for your own timing tests.</P>
+
+<P>Note that <A HREF="wing8g8p.htm">StretchDIBits</A> and <A HREF="wing4k9t.htm">WinGStretchBlt</A> operate on device-independent bitmaps whereas StretchBlt and BitBlt operate on device-specific bitmaps, which require no translation and can sometimes be stored in the local memory of the graphics card itself.</P>
+
+<P>Timewing.exe can be built as a Win32 app by compiling with the timewing.m32 makefile.  You may need to modify timewing.m32 for your compiler environment.</P>
+
+</BODY>
+</HTML>

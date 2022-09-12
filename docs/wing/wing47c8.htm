@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>WinGSetDIBColorTable</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000">
+
+<OBJECT TYPE="application/x-oleobject" CLASSID="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<PARAM NAME="Keyword" VALUE="Palette Animation">
+	<PARAM NAME="Keyword" VALUE="WinGSetDIBColorTable">
+</OBJECT>
+
+<P><A NAME="fxw6yh"></A>WinGSetDIBColorTable</P>
+
+<P>Modifies the color table of the currently selected WinGBitmap in a WinGDC.</P>
+
+<P><B>UINT WinGSetDIBColorTable( HDC </B><I>hWinGDC</I><B>, UINT </B><I>StartIndex</I><B>, UINT </B><I>NumberOfEntries</I><B>, RGBQUAD far *</B><I>pColors</I><B> )</B></P>
+
+<P><B>Parameters</B></P>
+
+<TABLE cols=2 width=548>
+
+<TR VALIGN="top">
+<TD width=21%><I>hWinGDC</I></TD>
+<TD width=79%>Identifies the WinG device context whose color table should be modified.</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=21%><I>StartIndex</I></TD>
+<TD width=79%>Indicates the first palette entry to be changed.</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=21%><I>NumberOfEntries</I></TD>
+<TD width=79%>Indicates the number of palette entries to change.</TD>
+</TR>
+
+<TR VALIGN="top">
+<TD width=21%><I>pColors</I></TD>
+<TD width=79%>Points to a buffer which contains the new color table values.</TD>
+</TR>
+</TABLE><BR>
+
+<P><B>Return Value</B></P>
+
+<P>Returns the number of palette entries modified in the specified device context or 0 if it failed.</P>
+
+<P><B>Comments</B></P>
+
+<P>The <I>pColors</I> buffer must hold at least <I>NumberOfEntries</I> RGBQUAD structures.</P>
+
+<P>If you want to update the display immediately (for example, in <A HREF="wing2mt1.htm">palette animation</A>), use <A HREF="wing8g8p.htm">AnimatePalette</A> to modify the system palette and then call <B>WinGSetDIBColorTable</B> to match it or the WinGDC will be remapped when it is blted. See the <A HREF="wing7ui6.htm">Palette Animation With WinG</A> article for more information and sample code that does this.</P>
+
+<P>Note that <I>StartIndex</I> indicates an entry in a palette array, which is zero-based. <I>NumberOfEntries</I> indicates a one-based count. If <I>NumberOfEntries</I> is zero, no color table entries will be modified.</P>
+
+<P><B>Maximizing Performance</B></P>
+
+<P>It is not necessary to call <B>WinGSetDIBColorTable</B> every time you call <A HREF="wing8g8p.htm">AnimatePalette</A>. Only call this API if you are about to blt and the destination palette has changed since the last call to <B>WinGSetDIBColorTable</B>.</P>
+
+<P><B>Example</B></P>
+
+<P>See the section titled <A HREF="wing7ui6.htm">Palette Animation With WinG</A> for sample code and discussion of using <B>WinGSetDIBColorTable</B> to perform palette animation.</P>
+
+<P>The <A HREF="wing4i5q.htm">PALANIM</A> sample, in the SAMPLES\PALANIM subdirectory of the WinG Development Kit, performs simple palette animation and maintains an <A HREF="wing7bxq.htm">identity palette</A> throughout.</P>
+
+<P><B>See Also</B></P>
+
+<P><A HREF="wing2ewn.htm">WinGGetDIBColorTable</A> <A HREF="wing683a.htm">WinGCreateBitmap</A> <A HREF="wing7ui6.htm">Palette Animation With WinG</A></P>
+
+</BODY>
+</HTML>
